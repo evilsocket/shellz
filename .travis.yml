@@ -1,0 +1,31 @@
+sudo: false
+
+language: go
+go:
+  - 1.8.x
+  - 1.9.x
+  - 1.10.x
+  - master
+
+matrix:
+  # It's ok if our code fails on unstable development versions of Go.
+  allow_failures:
+    - go: master
+  # Don't wait for tip tests to finish. Mark the test run green if the
+  # tests pass on the stable versions of Go.
+  fast_finish: true
+
+notifications:
+  email: false
+
+git:
+  depth: 3
+
+before_install:
+  - sudo apt-get -qq update
+
+install:
+  - make deps
+
+script:
+  - make build
