@@ -1,4 +1,4 @@
-# shellz
+[![logo](https://raw.github.com/evilsocket/shellz/master/logo.png)](https://asciinema.org/a/203726)
 
 [![Build](https://img.shields.io/travis/evilsocket/shellz/master.svg?style=flat-square)](https://travis-ci.org/evilsocket/shellz) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/evilsocket/shellz)](https://goreportcard.com/report/github.com/evilsocket/shellz) 
@@ -9,8 +9,6 @@
 `shellz` is a small utility to keep track of your connection credentials, servers and run commands on multiple machines at once. It supports `ssh`, `telnet` with more shell types coming soon!
 
 **WORK IN PROGRESS**
-
-[![logo](https://raw.github.com/evilsocket/shellz/master/logo.png)](https://asciinema.org/a/203726)
 
 ## Install
 
