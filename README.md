@@ -1,10 +1,13 @@
-[![logo](https://raw.github.com/evilsocket/shellz/master/logo.png)](https://asciinema.org/a/203726)
-
-[![Build](https://img.shields.io/travis/evilsocket/shellz/master.svg?style=flat-square)](https://travis-ci.org/evilsocket/shellz) 
-[![Go Report Card](https://goreportcard.com/badge/github.com/evilsocket/shellz)](https://goreportcard.com/report/github.com/evilsocket/shellz) 
-[![License](https://img.shields.io/badge/license-GPL3-brightgreen.svg?style=flat-square)](/LICENSE) 
-[![GoDoc](https://godoc.org/github.com/evilsocket/shellz?status.svg)](https://godoc.org/github.com/evilsocket/shellz) 
-[![Release](https://img.shields.io/github/release/evilsocket/shellz.svg?style=flat-square)](https://github.com/evilsocket/shellz/releases/latest) 
+<p align="center">
+  <img alt="shellz" src="https://raw.githubusercontent.com/evilsocket/shellz/master/logo.png" />
+  <p align="center">
+    <a href="https://github.com/evilsocket/shellz/releases/latest"><img alt="Release" src="https://img.shields.io/github/release/evilsocket/shellz.svg?style=flat-square"></a>
+    <a href="https://github.com/evilsocket/shellz/blob/master/LICENSE.md"><img alt="Software License" src="https://img.shields.io/badge/license-GPL3-brightgreen.svg?style=flat-square"></a>
+    <a href="https://travis-ci.org/evilsocket/shellz"><img alt="Travis" src="https://img.shields.io/travis/evilsocket/shellz/master.svg?style=flat-square"></a>
+    <a href="https://goreportcard.com/report/github.com/evilsocket/shellz"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/evilsocket/shellz?style=flat-square&fuckgithubcache=1"></a>
+    <a href="https://codecov.io/gh/evilsocket/shellz"><img alt="Code Coverage" src="https://img.shields.io/codecov/c/github/evilsocket/shellz/master.svg?style=flat-square"></a>
+  </p>
+</p>
 
 `shellz` is a small utility to keep track of your connection credentials, servers and run commands on multiple machines at once. It supports `ssh`, `telnet` with more shell types coming soon!
 
