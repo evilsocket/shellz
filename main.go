@@ -37,7 +37,7 @@ var (
 		out, err := session.Exec(command)
 
 		took := core.Dim(time.Since(start).String())
-		host := core.Dim(fmt.Sprintf("%s %s:%d", shell.Identity.Username, shell.Address, shell.Port))
+		host := core.Dim(fmt.Sprintf("%s@%s:%d", shell.Identity.Username, shell.Address, shell.Port))
 		outs := core.Dim("<no output>")
 		if out != nil {
 			outs = core.Trim(string(out))

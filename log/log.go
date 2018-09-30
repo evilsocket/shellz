@@ -11,6 +11,7 @@ import (
 const (
 	DEBUG = iota
 	INFO
+	OUTPUT
 	IMPORTANT
 	WARNING
 	ERROR
@@ -24,6 +25,7 @@ var (
 	Labels = map[int]string{
 		DEBUG:     "dbg",
 		INFO:      "inf",
+		OUTPUT:    "out",
 		IMPORTANT: "imp",
 		WARNING:   "war",
 		ERROR:     "err",
@@ -33,6 +35,7 @@ var (
 	Colors = map[int]string{
 		DEBUG:     core.DIM + core.FG_BLACK + core.BG_DGRAY,
 		INFO:      core.FG_WHITE + core.BG_GREEN,
+		OUTPUT:    core.DIM + core.FG_BLACK + core.BG_DGRAY,
 		IMPORTANT: core.FG_WHITE + core.BG_LBLUE,
 		WARNING:   core.FG_WHITE + core.BG_YELLOW,
 		ERROR:     core.FG_WHITE + core.BG_RED,
@@ -56,6 +59,10 @@ func color(level int, format string, args ...interface{}) {
 
 func Info(format string, args ...interface{}) {
 	color(INFO, format, args...)
+}
+
+func Output(format string, args ...interface{}) {
+	color(OUTPUT, format, args...)
 }
 
 func Warning(format string, args ...interface{}) {
