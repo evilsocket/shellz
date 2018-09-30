@@ -1,5 +1,5 @@
 builds:
-  - main: cmd/shellz/main.go
+  - main: cmd/shellz/*.go
     binary: shellz
     env:
       - CGO_ENABLED=0
