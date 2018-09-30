@@ -110,7 +110,7 @@ func runCommand() {
 
 	log.Info("running %s on %d shells ...\n", core.Dim(command), len(on))
 
-	for name, _ := range on {
+	for name := range on {
 		wq.Add(on[name])
 	}
 
