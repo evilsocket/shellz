@@ -72,7 +72,7 @@ func (t *TelnetSession) Exec(cmd string) ([]byte, error) {
 	t.Lock()
 	defer t.Unlock()
 
-	cmd += " && echo PLACEHOLDER"
+	cmd = fmt.Sprintf("(%s || echo) && echo PLACEHOLDER", cmd)
 	if _, err := t.client.Write([]byte(cmd + "\n")); err != nil {
 		return nil, fmt.Errorf("error while sending telnet command: %s", err)
 	}
