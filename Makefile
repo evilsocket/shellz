@@ -6,7 +6,7 @@ deps: godep
 	@dep ensure
 
 build:
-	@go build -o $(TARGET) cmd/shellz/main.go
+	@go build -o $(TARGET) cmd/shellz/*.go
 
 clean:
 	@rm -rf $(TARGET)

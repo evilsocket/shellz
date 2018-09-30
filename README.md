@@ -12,15 +12,13 @@
 
 **WORK IN PROGRESS**
 
-## Install
+## Install from Sources
 
 Make sure you have a correctly configured **Go >= 1.8** environment, that `$GOPATH/bin` is in `$PATH` and then:
 
-    $ go get github.com/evilsocket/shellz
-    $ cd $GOPATH/src/github.com/evilsocket/shellz
-    $ make && sudo make install
+    $ go get -u github.com/evilsocket/shellz/cmd/shellz
 
-This command will download shellz, install its dependencies, compile it and move the `shellz` executable to `/usr/local/bin`.
+This command will download shellz, install its dependencies, compile it and move the `shellz` executable to `$GOPATH/bin`.
 
 ## How to Use
 
