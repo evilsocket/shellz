@@ -63,7 +63,11 @@ cat ~/.shellz/shells/tnas.json
 }
 ```
 
-Once you have your shell and identity files ready, you can use shellz to run a command on a single machine:
+Once you have your shell and identity files ready, you can list them by running the command:
+
+    shellz -list
+    
+Now you can use shellz to run a command on a single machine:
 
     shellz -run uptime -on media-server
 
@@ -74,6 +78,8 @@ or on multiple at once:
 or on all of them:
 
     shellz -run uptime
+
+For a list of all available flags and some usage examples just type `shellz` without arguments.
 
 ## License
 
