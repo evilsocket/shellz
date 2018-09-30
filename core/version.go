@@ -2,7 +2,7 @@ package core
 
 const (
 	Name    = "shellz"
-	Version = "1.0.5"
+	Version = "1.0.6"
 	Author  = "Simone 'evilsocket' Margaritelli"
 	Website = "https://evilsocket.net/"
 )
