@@ -5,15 +5,15 @@ all: deps build
 deps: godep
 	@dep ensure
 
-build:
+build: deps
 	@go build -o $(TARGET) cmd/shellz/*.go
 
 clean:
 	@rm -rf $(TARGET)
 	@rm -rf build
 
-install:
-	@cp $(TARGET) /usr/local/bin/
+install: build
+	@cp $(TARGET) $(GOPATH)/bin/
 
 godep:
 	@go get -u github.com/golang/dep/...
