@@ -1,0 +1,41 @@
+builds:
+  - main: main.go
+    binary: shellz
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+      - freebsd
+      - netbsd
+      - openbsd
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+      - mips
+      - mipsle
+      - mips64
+      - mips64le
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - balls
+      - i did not bother commenting
+      - docs
+      - Merge pull request
+      - Merge branch
+      - Releasing v
+
+archive:
+  format: tar.gz
+  format_overrides:
+    - goos: windows
+      format: zip
+  files:
+      - LICENSE
+      - README.md

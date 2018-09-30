@@ -12,7 +12,10 @@ import (
 )
 
 const (
-	defaultType = "ssh"
+	defaultHost     = "localhost"
+	defaultPort     = 22
+	defaultIdentity = "default"
+	defaultType     = "ssh"
 )
 
 type Shell struct {
@@ -28,8 +31,11 @@ type Shell struct {
 
 func LoadShell(path string, idents Identities) (err error, shell Shell) {
 	shell = Shell{
-		Path: path,
-		Type: defaultType,
+		Path:         path,
+		Host:         defaultHost,
+		Port:         defaultPort,
+		Type:         defaultType,
+		IdentityName: defaultIdentity,
 	}
 
 	file, err := os.Open(path)
