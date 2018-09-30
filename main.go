@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
@@ -23,6 +24,7 @@ var (
 	shells   = models.Shells(nil)
 
 	wq = queue.New(-1, func(job queue.Job) {
+		start := time.Now()
 		shell := job.(models.Shell)
 		name := shell.Name
 		err, session := shell.NewSession()
@@ -32,23 +34,33 @@ var (
 		}
 		defer session.Close()
 
-		host := core.Dim(fmt.Sprintf("%s:%d", shell.Address, shell.Port))
+		out, err := session.Exec(command)
 
-		if out, err := session.Exec(command); err != nil {
-			log.Error("%s (%s %s) > %s (%s)\n\n%s",
+		took := core.Dim(time.Since(start).String())
+		host := core.Dim(fmt.Sprintf("%s %s:%d", shell.Identity.Username, shell.Address, shell.Port))
+		outs := core.Dim("<no output>")
+		if out != nil {
+			outs = core.Trim(string(out))
+			outs = fmt.Sprintf("\n\n%s\n", outs)
+		}
+
+		if err != nil {
+			log.Error("%s (%s %s %s) > %s (%s)%s",
 				core.Bold(name),
 				core.Green(shell.Type),
 				host,
+				took,
 				command,
 				core.Red(err.Error()),
-				out)
+				outs)
 		} else {
-			log.Info("%s (%s %s) > %s\n\n%s",
+			log.Info("%s (%s %s %s) > %s%s",
 				core.Bold(name),
 				core.Green(shell.Type),
 				host,
+				took,
 				core.Blue(command),
-				out)
+				outs)
 		}
 	})
 )
