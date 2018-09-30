@@ -7,6 +7,7 @@ import (
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
+	"github.com/evilsocket/shellz/queue"
 )
 
 var (
@@ -51,13 +52,13 @@ func main() {
 		log.Fatal("no shell selected by the filter %s", core.Dim(onFilter))
 	}
 
-	log.Info("running %s on %d shells ...\n", core.Dim(runCommand), len(on))
-
-	for name, shell := range on {
+	wq := queue.New(-1, func(job queue.Job) {
+		shell := job.(models.Shell)
+		name := shell.Name
 		err, session := shell.NewSession()
 		if err != nil {
 			log.Warning("error while creating session for shell %s: %s", name, err)
-			continue
+			return
 		}
 		defer session.Close()
 
@@ -67,5 +68,13 @@ func main() {
 		} else {
 			log.Info("%s (%s %s) > %s\n\n%s", core.Bold(name), core.Green(shell.Type), core.Dim(fmt.Sprintf("%s:%d", shell.Address, shell.Port)), core.Blue(runCommand), out)
 		}
+	})
+
+	log.Info("running %s on %d shells ...\n", core.Dim(runCommand), len(on))
+
+	for name, _ := range on {
+		wq.Add(on[name])
 	}
+
+	wq.WaitDone()
 }
