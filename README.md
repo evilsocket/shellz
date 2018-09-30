@@ -10,7 +10,7 @@
 
 **WORK IN PROGRESS**
 
-[![asciicast](https://asciinema.org/a/203726.png)](https://asciinema.org/a/203726)
+[![logo](https://raw.github.com/evilsocket/shellz/master/logo.png)](https://asciinema.org/a/203726)
 
 ## Install
 
