@@ -1,6 +1,5 @@
 builds:
-  - main: main.go
-    binary: shellz
+  - binary: shellz
     env:
       - CGO_ENABLED=0
     goos:
