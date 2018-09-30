@@ -3,6 +3,22 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:8ca619fd5ff6877c2b638dcc6f0dafd70dd54117c0ab64456722166edcc7e305"
+  name = "github.com/reiver/go-oi"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "431c83978379297f04f85f6eb94f129f25ab741d"
+
+[[projects]]
+  branch = "master"
+  digest = "1:5a9ba677807e12c903f0f1b83a7c44b9907fbb82767108ef9d80e58d5e7be70b"
+  name = "github.com/reiver/go-telnet"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9ff0b2ab096ebe42bf8e2ffd1366e7ed2223b04c"
+
+[[projects]]
+  branch = "master"
   digest = "1:b166c998eb589cd6da3aa24901f328e2d14cfe17cda0957129f880723ee9384b"
   name = "golang.org/x/crypto"
   packages = [
@@ -20,6 +36,9 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["golang.org/x/crypto/ssh"]
+  input-imports = [
+    "github.com/reiver/go-telnet",
+    "golang.org/x/crypto/ssh",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

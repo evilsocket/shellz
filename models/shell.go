@@ -8,6 +8,11 @@ import (
 	"os"
 
 	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/shellz/sessions"
+)
+
+const (
+	defaultType = "ssh"
 )
 
 type Shell struct {
@@ -16,12 +21,17 @@ type Shell struct {
 	Address      net.IP    `json:"address"`
 	Port         int       `json:"port"`
 	IdentityName string    `json:"identity"`
+	Type         string    `json:"type"`
 	Identity     *Identity `json:"-"`
 	Path         string    `json:"-"`
 }
 
 func LoadShell(path string, idents Identities) (err error, shell Shell) {
-	shell = Shell{Path: path}
+	shell = Shell{
+		Path: path,
+		Type: defaultType,
+	}
+
 	file, err := os.Open(path)
 	if err != nil {
 		return
@@ -51,6 +61,9 @@ func LoadShell(path string, idents Identities) (err error, shell Shell) {
 	return
 }
 
-func (sh Shell) NewSession() (error, *Session) {
-	return NewSessionFor(sh)
+func (sh Shell) NewSession() (error, sessions.Session) {
+	if mgr, found := sessions.Manager[sh.Type]; found {
+		return mgr(sh.Address, sh.Port, sh.Identity.Username, sh.Identity.Password, sh.Identity.KeyFile)
+	}
+	return fmt.Errorf("session type %s for shell %s is not supported", sh.Type, sh.Name), nil
 }

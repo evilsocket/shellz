@@ -63,9 +63,9 @@ func main() {
 
 		out, err := session.Exec(runCommand)
 		if err != nil {
-			log.Error("%s (%s) > %s\n\n%s", core.Bold(name), core.Dim(fmt.Sprintf("%s:%d", shell.Address, shell.Port)), core.Red(runCommand), out)
+			log.Error("%s (%s %s) > %s (%s)\n\n%s", core.Bold(name), core.Green(shell.Type), core.Dim(fmt.Sprintf("%s:%d", shell.Address, shell.Port)), runCommand, core.Red(err.Error()), out)
 		} else {
-			log.Info("%s (%s) > %s\n\n%s", core.Bold(name), core.Dim(fmt.Sprintf("%s:%d", shell.Address, shell.Port)), core.Blue(runCommand), out)
+			log.Info("%s (%s %s) > %s\n\n%s", core.Bold(name), core.Green(shell.Type), core.Dim(fmt.Sprintf("%s:%d", shell.Address, shell.Port)), core.Blue(runCommand), out)
 		}
 	}
 }
