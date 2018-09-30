@@ -1,4 +1,2 @@
 vendor
-shellz
 dist
-!cmd/shellz
