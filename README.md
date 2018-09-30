@@ -61,21 +61,31 @@ cat ~/.shellz/shells/tnas.json
 }
 ```
 
-Once you have your shell and identity files ready, you can list them by running the command:
+**Examples**
 
-    shellz -list
-    
-Now you can use shellz to run a command on a single machine:
+List available identities and shells:
 
-    shellz -run uptime -on media-server
+  shellz -list
 
-or on multiple at once:
+Run the command `id` on each shell:
 
-    shellz -run uptime -on "media-server, tnas"
+  shellz -run id
 
-or on all of them:
+Run the command `id` on a single shell named `machineA`:
 
-    shellz -run uptime
+  shellz -run id -on machineA
+
+Run the command `id` on `machineA` and `machineB`:
+
+  shellz -run id -on 'machineA, machineB'
+
+Run the command `uptime` on every shell and append all outputs to the `all.txt` file:
+
+  shellz -run uptime -to all.txt
+
+Run the command `uptime` on every shell and save each outputs to a different file using per-shell data:
+
+  shellz -run uptime -to "{{.Identity.Username}}\_{{.Name}}.txt"
 
 For a list of all available flags and some usage examples just type `shellz` without arguments.
 
