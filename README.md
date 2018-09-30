@@ -10,9 +10,11 @@
 
 `shellz` is a small utility to keep track of your connection credentials, servers and run commands on multiple machines at once. It supports `ssh`, `telnet` with more shell types coming soon!
 
-**WORK IN PROGRESS**
+## Installation
 
-## Install from Sources
+A [precompiled version is available for each release](https://github.com/evilsocket/shellz/releases), alternatively you can use the latest version of the source code from this repository in order to build your own binary.
+
+### From Sources
 
 Make sure you have a correctly configured **Go >= 1.8** environment, that `$GOPATH/bin` is in `$PATH` and then:
 
