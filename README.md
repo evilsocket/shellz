@@ -5,7 +5,6 @@
     <a href="https://github.com/evilsocket/shellz/blob/master/LICENSE.md"><img alt="Software License" src="https://img.shields.io/badge/license-GPL3-brightgreen.svg?style=flat-square"></a>
     <a href="https://travis-ci.org/evilsocket/shellz"><img alt="Travis" src="https://img.shields.io/travis/evilsocket/shellz/master.svg?style=flat-square"></a>
     <a href="https://goreportcard.com/report/github.com/evilsocket/shellz"><img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/evilsocket/shellz?style=flat-square&fuckgithubcache=1"></a>
-    <a href="https://codecov.io/gh/evilsocket/shellz"><img alt="Code Coverage" src="https://img.shields.io/codecov/c/github/evilsocket/shellz/master.svg?style=flat-square"></a>
   </p>
 </p>
 
