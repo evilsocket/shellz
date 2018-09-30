@@ -36,6 +36,7 @@ func LoadShell(path string, idents Identities) (err error, shell Shell) {
 		Port:         defaultPort,
 		Type:         defaultType,
 		IdentityName: defaultIdentity,
+		Address:      net.IP{0},
 	}
 
 	file, err := os.Open(path)
@@ -51,14 +52,7 @@ func LoadShell(path string, idents Identities) (err error, shell Shell) {
 
 	if err = json.Unmarshal(raw, &shell); err != nil {
 		return fmt.Errorf("error decoding '%s': %s", path, err), shell
-	} else if addrs, err := net.LookupIP(shell.Host); err != nil {
-		return fmt.Errorf("could not resolve host '%s' for shell '%s'", shell.Host, path), shell
-	} else {
-		shell.Address = addrs[0]
-		log.Debug("host %s resolved to %s", shell.Host, shell.Address)
-	}
-
-	if ident, found := idents[shell.IdentityName]; !found {
+	} else if ident, found := idents[shell.IdentityName]; !found {
 		return fmt.Errorf("shell '%s' referenced an unknown identity '%s'", path, shell.IdentityName), shell
 	} else {
 		shell.Identity = &ident
@@ -68,6 +62,15 @@ func LoadShell(path string, idents Identities) (err error, shell Shell) {
 }
 
 func (sh Shell) NewSession() (error, sessions.Session) {
+	if sh.Address[0] == 0 {
+		if addrs, err := net.LookupIP(sh.Host); err != nil {
+			return fmt.Errorf("could not resolve host '%s' for shell '%s'", sh.Host, sh.Name), nil
+		} else {
+			sh.Address = addrs[0]
+			log.Debug("host %s resolved to %s", sh.Host, sh.Address)
+		}
+	}
+
 	if mgr, found := sessions.Manager[sh.Type]; found {
 		return mgr(sh.Address, sh.Port, sh.Identity.Username, sh.Identity.Password, sh.Identity.KeyFile)
 	}
