@@ -85,7 +85,7 @@ Run the command `uptime` on every shell and append all outputs to the `all.txt` 
 
 Run the command `uptime` on every shell and save each outputs to a different file using per-shell data:
 
-    shellz -run uptime -to "{{.Identity.Username}}\_{{.Name}}.txt"
+    shellz -run uptime -to "{{.Identity.Username}}_{{.Name}}.txt"
 
 For a list of all available flags and some usage examples just type `shellz` without arguments.
 
