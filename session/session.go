@@ -4,7 +4,15 @@ import (
 	"net"
 )
 
-type Handler func(address net.IP, port int, user string, pass string, keyFile string) (error, Session)
+type Context struct {
+	Address  net.IP
+	Port     int
+	Username string
+	Password string
+	KeyFile  string
+}
+
+type Handler func(ctx Context) (error, Session)
 
 type Session interface {
 	Type() string

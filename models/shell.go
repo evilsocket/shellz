@@ -72,7 +72,15 @@ func (sh Shell) NewSession() (error, session.Session) {
 	}
 
 	if mgr, found := session.Manager[sh.Type]; found {
-		return mgr(sh.Address, sh.Port, sh.Identity.Username, sh.Identity.Password, sh.Identity.KeyFile)
+		ctx := session.Context{
+			Address:  sh.Address,
+			Port:     sh.Port,
+			Username: sh.Identity.Username,
+			Password: sh.Identity.Password,
+			KeyFile:  sh.Identity.KeyFile,
+		}
+		return mgr(ctx)
 	}
+
 	return fmt.Errorf("session type %s for shell %s is not supported", sh.Type, sh.Name), nil
 }

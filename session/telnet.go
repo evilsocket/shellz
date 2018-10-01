@@ -2,7 +2,6 @@ package session
 
 import (
 	"fmt"
-	"net"
 	"strings"
 	"sync"
 
@@ -12,36 +11,32 @@ import (
 	"github.com/reiver/go-telnet"
 )
 
-const (
-	bufferSize = 0xffff
-)
-
 type TelnetSession struct {
 	sync.Mutex
+	host   string
 	client *telnet.Conn
-	buffer []byte
 }
 
-func NewTelnet(address net.IP, port int, user string, pass string, keyFile string) (error, Session) {
-	host := fmt.Sprintf("%s:%d", address.String(), port)
-	cli, err := telnet.DialTo(host)
+func NewTelnet(ctx Context) (error, Session) {
+	var err error
+
+	t := &TelnetSession{
+		host: fmt.Sprintf("%s:%d", ctx.Address.String(), ctx.Port),
+	}
+
+	t.client, err = telnet.DialTo(t.host)
 	if err != nil {
 		return err, nil
 	}
 
-	t := &TelnetSession{
-		client: cli,
-		buffer: make([]byte, bufferSize),
-	}
-
-	if user != "" && pass != "" {
+	if ctx.Username != "" && ctx.Password != "" {
 		t.doReadUntil(": ")
-		if _, err = t.client.Write([]byte(user + "\n")); err != nil {
+		if _, err = t.client.Write([]byte(ctx.Username + "\n")); err != nil {
 			return fmt.Errorf("error while sending telnet username: %s", err), nil
 		}
 
 		t.doReadUntil(": ")
-		if _, err = t.client.Write([]byte(pass + "\n")); err != nil {
+		if _, err = t.client.Write([]byte(ctx.Password + "\n")); err != nil {
 			return fmt.Errorf("error while sending telnet password: %s", err), nil
 		}
 	}

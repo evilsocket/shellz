@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"golang.org/x/crypto/ssh"
 	"io/ioutil"
-	"net"
 	"sync"
 
 	"github.com/evilsocket/shellz/core"
@@ -13,45 +12,55 @@ import (
 
 type SSHSession struct {
 	sync.Mutex
+	host    string
 	config  *ssh.ClientConfig
 	client  *ssh.Client
 	session *ssh.Session
 }
 
-func NewSSH(address net.IP, port int, user string, pass string, keyFile string) (error, Session) {
+func ctx2ClientConfig(ctx Context) (error, *ssh.ClientConfig) {
 	var err error
 
 	authMethods := []ssh.AuthMethod{}
-	if pass != "" {
-		authMethods = append(authMethods, ssh.Password(pass))
+	if ctx.Password != "" {
+		authMethods = append(authMethods, ssh.Password(ctx.Password))
 	}
 
-	if keyFile != "" {
-		if keyFile, err = core.ExpandPath(keyFile); err != nil {
-			return fmt.Errorf("error while expanding path '%s': %s", keyFile, err), nil
+	if ctx.KeyFile != "" {
+		if ctx.KeyFile, err = core.ExpandPath(ctx.KeyFile); err != nil {
+			return fmt.Errorf("error while expanding path '%s': %s", ctx.KeyFile, err), nil
 		}
 
-		log.Debug("loading ssh key from %s ...", keyFile)
-		key, err := ioutil.ReadFile(keyFile)
-		if err != nil {
-			return fmt.Errorf("error while reading key file %s: %s", keyFile, err), nil
+		log.Debug("loading ssh key from %s ...", ctx.KeyFile)
+
+		if key, err := ioutil.ReadFile(ctx.KeyFile); err != nil {
+			return fmt.Errorf("error while reading key file %s: %s", ctx.KeyFile, err), nil
 		} else if signer, err := ssh.ParsePrivateKey(key); err != nil {
-			return fmt.Errorf("error while parsing key file %s: %s", keyFile, err), nil
+			return fmt.Errorf("error while parsing key file %s: %s", ctx.KeyFile, err), nil
 		} else {
 			authMethods = append(authMethods, ssh.PublicKeys(signer))
 		}
 	}
 
-	host := fmt.Sprintf("%s:%d", address.String(), port)
-	sshs := &SSHSession{
-		config: &ssh.ClientConfig{
-			User:            user,
-			Auth:            authMethods,
-			HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		},
+	return nil, &ssh.ClientConfig{
+		User:            ctx.Username,
+		Auth:            authMethods,
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	}
+}
+
+func NewSSH(ctx Context) (error, Session) {
+	err, cfg := ctx2ClientConfig(ctx)
+	if err != nil {
+		return err, nil
 	}
 
-	if sshs.client, err = ssh.Dial("tcp", host, sshs.config); err != nil {
+	sshs := &SSHSession{
+		host:   fmt.Sprintf("%s:%d", ctx.Address.String(), ctx.Port),
+		config: cfg,
+	}
+
+	if sshs.client, err = ssh.Dial("tcp", sshs.host, sshs.config); err != nil {
 		return err, nil
 	} else if sshs.session, err = sshs.client.NewSession(); err != nil {
 		sshs.client.Close()
