@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/evilsocket/shellz/log"
-	"github.com/evilsocket/shellz/sessions"
+	"github.com/evilsocket/shellz/session"
 )
 
 const (
@@ -61,7 +61,7 @@ func LoadShell(path string, idents Identities) (err error, shell Shell) {
 	return
 }
 
-func (sh Shell) NewSession() (error, sessions.Session) {
+func (sh Shell) NewSession() (error, session.Session) {
 	if sh.Address[0] == 0 {
 		if addrs, err := net.LookupIP(sh.Host); err != nil {
 			return fmt.Errorf("could not resolve host '%s' for shell '%s'", sh.Host, sh.Name), nil
@@ -71,7 +71,7 @@ func (sh Shell) NewSession() (error, sessions.Session) {
 		}
 	}
 
-	if mgr, found := sessions.Manager[sh.Type]; found {
+	if mgr, found := session.Manager[sh.Type]; found {
 		return mgr(sh.Address, sh.Port, sh.Identity.Username, sh.Identity.Password, sh.Identity.KeyFile)
 	}
 	return fmt.Errorf("session type %s for shell %s is not supported", sh.Type, sh.Name), nil
