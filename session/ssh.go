@@ -5,6 +5,7 @@ import (
 	"golang.org/x/crypto/ssh"
 	"io/ioutil"
 	"sync"
+	"time"
 
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
@@ -12,10 +13,11 @@ import (
 
 type SSHSession struct {
 	sync.Mutex
-	host    string
-	config  *ssh.ClientConfig
-	client  *ssh.Client
-	session *ssh.Session
+	host     string
+	config   *ssh.ClientConfig
+	client   *ssh.Client
+	session  *ssh.Session
+	timeouts Timeouts
 }
 
 func ctx2ClientConfig(ctx Context) (error, *ssh.ClientConfig) {
@@ -45,6 +47,7 @@ func ctx2ClientConfig(ctx Context) (error, *ssh.ClientConfig) {
 	return nil, &ssh.ClientConfig{
 		User:            ctx.Username,
 		Auth:            authMethods,
+		Timeout:         ctx.Timeouts.Connect,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 }
@@ -56,8 +59,9 @@ func NewSSH(ctx Context) (error, Session) {
 	}
 
 	sshs := &SSHSession{
-		host:   fmt.Sprintf("%s:%d", ctx.Address.String(), ctx.Port),
-		config: cfg,
+		host:     fmt.Sprintf("%s:%d", ctx.Address.String(), ctx.Port),
+		config:   cfg,
+		timeouts: ctx.Timeouts,
 	}
 
 	if sshs.client, err = ssh.Dial("tcp", sshs.host, sshs.config); err != nil {
@@ -66,6 +70,7 @@ func NewSSH(ctx Context) (error, Session) {
 		sshs.client.Close()
 		return err, nil
 	}
+
 	return nil, sshs
 }
 
@@ -73,10 +78,35 @@ func (s *SSHSession) Type() string {
 	return "ssh"
 }
 
+type cmdResult struct {
+	out []byte
+	err error
+}
+
 func (s *SSHSession) Exec(cmd string) ([]byte, error) {
 	s.Lock()
 	defer s.Unlock()
-	return s.session.CombinedOutput(cmd)
+
+	// horrible, but there's no other way around
+	// with this ssh client library :/
+	res := cmdResult{}
+	done := make(chan cmdResult)
+	timeout := time.After(s.timeouts.Write + s.timeouts.Read)
+	go func() {
+		out, err := s.session.CombinedOutput(cmd)
+		done <- cmdResult{out: out, err: err}
+	}()
+
+	select {
+	case <-timeout:
+		return nil, fmt.Errorf("timeout while sending ssh command to %s", s.host)
+	case res = <-done:
+		if res.err != nil {
+			return res.out, res.err
+		}
+	}
+
+	return res.out, res.err
 }
 
 func (s *SSHSession) Close() {

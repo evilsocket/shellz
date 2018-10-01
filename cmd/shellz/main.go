@@ -2,10 +2,12 @@ package main
 
 import (
 	"flag"
+	"time"
 
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
+	"github.com/evilsocket/shellz/session"
 )
 
 var (
@@ -18,6 +20,12 @@ var (
 	err      = error(nil)
 	idents   = models.Identities(nil)
 	shells   = models.Shells(nil)
+
+	timeouts = session.Timeouts{
+		Connect: 5 * time.Second,
+		Read:    500 * time.Millisecond,
+		Write:   500 * time.Millisecond,
+	}
 )
 
 func init() {
@@ -26,6 +34,10 @@ func init() {
 	flag.StringVar(&command, "run", command, "Command to run on the selected shells.")
 	flag.StringVar(&onFilter, "on", onFilter, "Comma separated list of shell names to select or * for all.")
 	flag.StringVar(&toOutput, "to", toOutput, "If filled, commands output will be saved to this file instead of being printed on the standard output.")
+
+	flag.DurationVar(&timeouts.Connect, "connection-timeout", timeouts.Connect, "Connection timeout.")
+	flag.DurationVar(&timeouts.Read, "read-timeout", timeouts.Read, "Read timeout.")
+	flag.DurationVar(&timeouts.Write, "write-timeout", timeouts.Write, "Write timeout.")
 
 	flag.BoolVar(&log.DebugMessages, "debug", log.DebugMessages, "Enable debug messages.")
 	flag.Parse()

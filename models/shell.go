@@ -61,7 +61,7 @@ func LoadShell(path string, idents Identities) (err error, shell Shell) {
 	return
 }
 
-func (sh Shell) NewSession() (error, session.Session) {
+func (sh Shell) NewSession(timeouts session.Timeouts) (error, session.Session) {
 	if sh.Address[0] == 0 {
 		if addrs, err := net.LookupIP(sh.Host); err != nil {
 			return fmt.Errorf("could not resolve host '%s' for shell '%s'", sh.Host, sh.Name), nil
@@ -72,14 +72,14 @@ func (sh Shell) NewSession() (error, session.Session) {
 	}
 
 	if mgr, found := session.Manager[sh.Type]; found {
-		ctx := session.Context{
+		return mgr(session.Context{
 			Address:  sh.Address,
 			Port:     sh.Port,
 			Username: sh.Identity.Username,
 			Password: sh.Identity.Password,
 			KeyFile:  sh.Identity.KeyFile,
-		}
-		return mgr(ctx)
+			Timeouts: timeouts,
+		})
 	}
 
 	return fmt.Errorf("session type %s for shell %s is not supported", sh.Type, sh.Name), nil
