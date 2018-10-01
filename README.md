@@ -92,11 +92,22 @@ var headers = {
     'User-Agent': 'imma-shellz-plugin'
 };
 
+/*
+ * The Create callback is called whenever a new command has been queued
+ * for execution and the session should be initiated, in this case we 
+ * simply return the main context object, but it might be used to connect
+ * to the endpoint and store the socket on a more complex Object.
+ */
 function Create(ctx) {
     // log("Create(" + ctx + ")");
     return ctx;
 }
 
+/*
+ * Exec is called for each command, the first argument is the context object
+ * returned from the Create callback, while the second is a string with the
+ * command itself.
+ */
 function Exec(ctx, cmd) {
     // log("running " + cmd + " on " + ctx.Host);
 
@@ -110,6 +121,9 @@ function Exec(ctx, cmd) {
     return resp.Error ? resp.Error : resp.Raw;
 }
 
+/*
+ * Used to finalize the state of the object (close sockets, etc).
+ */
 function Close(obj) {
     // log("Close(" + ctx + ")");
 }
