@@ -100,7 +100,7 @@ function Create(ctx) {
 function Exec(ctx, cmd) {
     // log("running " + cmd + " on " + ctx.Host);
 
-	/* 
+    /* 
      * OR
      *
      * var resp = http.Post(ctx.Host, headers, {"cmd":cmd});
