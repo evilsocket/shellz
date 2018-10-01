@@ -99,7 +99,14 @@ function Create(ctx) {
 
 function Exec(ctx, cmd) {
     // log("running " + cmd + " on " + ctx.Host);
+
+	/* 
+     * OR
+     *
+     * var resp = http.Post(ctx.Host, headers, {"cmd":cmd});
+     */
     var resp = http.Get(ctx.Host + "?cmd=" + cmd, headers)
+
     return resp.Error ? resp.Error : resp.Raw;
 }
 
