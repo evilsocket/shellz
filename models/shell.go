@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"strings"
 
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/session"
@@ -62,7 +63,7 @@ func LoadShell(path string, idents Identities) (err error, shell Shell) {
 }
 
 func (sh Shell) NewSession(timeouts session.Timeouts) (error, session.Session) {
-	if sh.Address[0] == 0 {
+	if !strings.Contains(sh.Host, "://") && sh.Address[0] == 0 {
 		if addrs, err := net.LookupIP(sh.Host); err != nil {
 			return fmt.Errorf("could not resolve host '%s' for shell '%s'", sh.Host, sh.Name), nil
 		} else {
@@ -71,15 +72,23 @@ func (sh Shell) NewSession(timeouts session.Timeouts) (error, session.Session) {
 		}
 	}
 
-	if mgr, found := session.Manager[sh.Type]; found {
-		return mgr(session.Context{
-			Address:  sh.Address,
-			Port:     sh.Port,
-			Username: sh.Identity.Username,
-			Password: sh.Identity.Password,
-			KeyFile:  sh.Identity.KeyFile,
-			Timeouts: timeouts,
-		})
+	ctx := session.Context{
+		Host:     sh.Host,
+		Address:  sh.Address,
+		Port:     sh.Port,
+		Username: sh.Identity.Username,
+		Password: sh.Identity.Password,
+		KeyFile:  sh.Identity.KeyFile,
+		Timeouts: timeouts,
+	}
+
+	// check the built in session managers
+	if mgr := session.GetManager(sh.Type); mgr != nil {
+		return mgr(ctx)
+	}
+	// check for user provided plugins
+	if plugin := session.GetPlugin(sh.Type); plugin != nil {
+		return session.NewPluginSession(plugin.Clone(), ctx)
 	}
 
 	return fmt.Errorf("session type %s for shell %s is not supported", sh.Type, sh.Name), nil

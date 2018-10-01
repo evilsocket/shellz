@@ -12,6 +12,7 @@ type Timeouts struct {
 }
 
 type Context struct {
+	Host     string
 	Address  net.IP
 	Port     int
 	Username string

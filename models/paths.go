@@ -9,9 +9,10 @@ import (
 
 var (
 	Paths = map[string]string{
-		"base":   "~/.shellz",
-		"idents": "~/.shellz/idents",
-		"shells": "~/.shellz/shells",
+		"base":    "~/.shellz",
+		"idents":  "~/.shellz/idents",
+		"shells":  "~/.shellz/shells",
+		"plugins": "~/.shellz/plugins",
 	}
 )
 

@@ -19,6 +19,43 @@ var (
 	wq      = queue.New(-1, cmdWorker)
 )
 
+func processOutput(out []byte, shell models.Shell) string {
+	outLock.Lock()
+	defer outLock.Unlock()
+
+	outs := core.Dim(" <no output>")
+	if out != nil {
+		fileName := toOutput
+		if fileName == "" {
+			outs = fmt.Sprintf("\n\n%s\n", core.Trim(string(out)))
+		} else {
+			size := len(out)
+			buff := bytes.Buffer{}
+			if tmpl, err := template.New("filename").Parse(toOutput); err != nil {
+				panic(err)
+			} else if err := tmpl.Execute(&buff, shell); err != nil {
+				panic(err)
+			} else {
+				fileName = buff.String()
+			}
+
+			if file, err := os.OpenFile(fileName, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644); err != nil {
+				outs = fmt.Sprintf(" > error while saving to %s: %s", fileName, err)
+			} else {
+				defer file.Close()
+				if wrote, err := file.Write(out); err != nil {
+					outs = fmt.Sprintf(" > error while saving to %s: %s", fileName, err)
+				} else if wrote != size {
+					outs = fmt.Sprintf(" > error while saving to %s: size is %d, wrote %d", fileName, size, wrote)
+				} else {
+					outs = core.Dim(fmt.Sprintf(" > %d bytes saved to %s", size, fileName))
+				}
+			}
+		}
+	}
+	return outs
+}
+
 func cmdWorker(job queue.Job) {
 	start := time.Now()
 	shell := job.(models.Shell)
@@ -31,46 +68,10 @@ func cmdWorker(job queue.Job) {
 	defer session.Close()
 
 	out, err := session.Exec(command)
-
 	took := core.Dim(time.Since(start).String())
 	host := core.Dim(fmt.Sprintf("%s@%s:%d", shell.Identity.Username, shell.Host, shell.Port))
-	outs := core.Dim(" <no output>")
 
-	if out != nil {
-		fileName := toOutput
-		if fileName == "" {
-			outs = core.Trim(string(out))
-			outs = fmt.Sprintf("\n\n%s\n", outs)
-		} else {
-			buff := bytes.Buffer{}
-			if tmpl, err := template.New("filename").Parse(toOutput); err != nil {
-				panic(err)
-			} else if err := tmpl.Execute(&buff, shell); err != nil {
-				panic(err)
-			} else {
-				fileName = buff.String()
-			}
-
-			outLock.Lock()
-			defer outLock.Unlock()
-
-			size := len(out)
-			file, err := os.OpenFile(fileName, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
-			if err != nil {
-				outs = fmt.Sprintf(" > error while saving to %s: %s", fileName, err)
-			} else {
-				defer file.Close()
-
-				if wrote, err := file.Write(out); err != nil {
-					outs = fmt.Sprintf(" > error while saving to %s: %s", fileName, err)
-				} else if wrote != size {
-					outs = fmt.Sprintf(" > error while saving to %s: size is %d, wrote %d", fileName, size, wrote)
-				} else {
-					outs = core.Dim(fmt.Sprintf(" > %d bytes saved to %s", size, fileName))
-				}
-			}
-		}
-	}
+	outs := processOutput(out, shell)
 
 	if err != nil {
 		log.Error("%s (%s %s %s) > %s (%s)%s",
