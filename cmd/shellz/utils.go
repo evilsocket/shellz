@@ -20,11 +20,19 @@ func findShells(name string) []models.Shell {
 }
 
 func doShellSelection(filter string, includeDisabled bool) (error, models.Shells) {
+	sel := models.Shells{}
+
 	if filter == "*" {
-		return nil, shells
+		for _, sh := range shells {
+			if includeDisabled || sh.Enabled {
+				sel[sh.Name] = sh
+			} else {
+				log.Debug("skipping disabled shell %s", sh.Name)
+			}
+		}
+		return nil, sel
 	}
 
-	sel := models.Shells{}
 	for _, name := range core.CommaSplit(filter) {
 		if found := findShells(name); len(found) == 0 {
 			return fmt.Errorf("can't find shell %s", name), nil
