@@ -206,7 +206,7 @@ Run the command `uptime` on every shell and append all outputs to the `all.txt` 
 
     shellz -run uptime -to all.txt
 
-Run the command `uptime` on every shell and save each outputs to a different file using per-shell data (every field referenced between `{{` and `}}` will be replaced by the shell json fields equivalent):
+Run the command `uptime` on every shell and save each outputs to a different file using per-shell data (every field referenced between `{{` and `}}` will be replaced by the json field of the shell object):
 
     shellz -run uptime -to "{{.Identity.Username}}_{{.Name}}.txt"
 
