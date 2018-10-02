@@ -20,6 +20,7 @@ var (
 	doTest    = false
 	doEnable  = ""
 	doDisable = ""
+	noBanner  = false
 	err       = error(nil)
 	idents    = models.Identities(nil)
 	shells    = models.Shells(nil)
@@ -48,11 +49,14 @@ func init() {
 	flag.DurationVar(&timeouts.Write, "write-timeout", timeouts.Write, "Write timeout.")
 
 	flag.BoolVar(&log.DebugMessages, "debug", log.DebugMessages, "Enable debug messages.")
+	flag.BoolVar(&noBanner, "no-banner", noBanner, "Don't print the initial banner.")
 	flag.Parse()
 }
 
 func main() {
-	log.Raw(core.Banner)
+	if !noBanner {
+		log.Raw(core.Banner)
+	}
 
 	if err, idents, shells = models.Load(); err != nil {
 		log.Fatal("error while loading data: %s", err)
