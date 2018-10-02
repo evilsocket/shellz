@@ -131,9 +131,17 @@ function Close(obj) {
 
 ### Examples
 
-List available identities and shells:
+List available identities, plugins and shells:
 
     shellz -list
+
+Enable the shell named machineA:
+
+    shellz -enable machineA
+
+Disable the shell named machineA (commands won't be executed on it):
+
+  shellz -disable machineA
 
 Run the command `id` on each shell:
 

@@ -68,20 +68,24 @@ func showShellsList() {
 		"Name",
 		"Type",
 		"Host",
-		"Address",
 		"Port",
 		"Identity",
+		"Enabled",
 		// "Path",
 	}
 
 	for _, sh := range shells {
+		en := core.Green("✔")
+		if !sh.Enabled {
+			en = core.Red("✖")
+		}
 		rows = append(rows, []string{
 			core.Bold(sh.Name),
 			core.Dim(sh.Type),
 			sh.Host,
-			core.Blue(sh.Address.String()),
 			fmt.Sprintf("%d", sh.Port),
 			core.Yellow(sh.IdentityName),
+			en,
 			// core.Dim(sh.Path),
 		})
 	}

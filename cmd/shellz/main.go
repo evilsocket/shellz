@@ -11,15 +11,17 @@ import (
 )
 
 var (
-	command  = ""
-	onFilter = "*"
-	onNames  = []string{}
-	on       = models.Shells{}
-	toOutput = ""
-	doList   = false
-	err      = error(nil)
-	idents   = models.Identities(nil)
-	shells   = models.Shells(nil)
+	command   = ""
+	onFilter  = "*"
+	onNames   = []string{}
+	on        = models.Shells{}
+	toOutput  = ""
+	doList    = false
+	doEnable  = ""
+	doDisable = ""
+	err       = error(nil)
+	idents    = models.Identities(nil)
+	shells    = models.Shells(nil)
 
 	timeouts = session.Timeouts{
 		Connect: 5 * time.Second,
@@ -30,6 +32,9 @@ var (
 
 func init() {
 	flag.BoolVar(&doList, "list", doList, "List available shells and exit.")
+
+	flag.StringVar(&doEnable, "enable", "", "Enable the specified shell.")
+	flag.StringVar(&doDisable, "disable", "", "Disable the specified shell.")
 
 	flag.StringVar(&command, "run", command, "Command to run on the selected shells.")
 	flag.StringVar(&onFilter, "on", onFilter, "Comma separated list of shell names to select or * for all.")
@@ -58,6 +63,10 @@ func main() {
 
 	if doList {
 		showList()
+	} else if doEnable != "" {
+		runEnable(doEnable, true)
+	} else if doDisable != "" {
+		runEnable(doDisable, false)
 	} else if command != "" {
 		runCommand()
 	} else {

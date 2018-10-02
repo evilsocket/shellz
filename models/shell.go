@@ -20,18 +20,21 @@ const (
 )
 
 type Shell struct {
-	Name         string    `json:"name"`
-	Host         string    `json:"host"`
-	Address      net.IP    `json:"address"`
-	Port         int       `json:"port"`
-	IdentityName string    `json:"identity"`
-	Type         string    `json:"type"`
-	Identity     *Identity `json:"-"`
-	Path         string    `json:"-"`
+	Name         string `json:"name"`
+	Host         string `json:"host"`
+	Port         int    `json:"port"`
+	IdentityName string `json:"identity"`
+	Type         string `json:"type"`
+	Enabled      bool   `json:"enabled"`
+
+	Address  net.IP    `json:"-"`
+	Identity *Identity `json:"-"`
+	Path     string    `json:"-"`
 }
 
 func LoadShell(path string, idents Identities) (err error, shell Shell) {
 	shell = Shell{
+		Enabled:      true,
 		Path:         path,
 		Host:         defaultHost,
 		Port:         defaultPort,
@@ -60,6 +63,15 @@ func LoadShell(path string, idents Identities) (err error, shell Shell) {
 	}
 
 	return
+}
+
+func (sh Shell) Save() error {
+	if data, err := json.Marshal(sh); err != nil {
+		return err
+	} else if err = ioutil.WriteFile(sh.Path, data, 0644); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (sh Shell) NewSession(timeouts session.Timeouts) (error, session.Session) {

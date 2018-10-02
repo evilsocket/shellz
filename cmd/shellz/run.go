@@ -106,8 +106,18 @@ func runCommand() {
 		}
 	}
 
+	tmp := models.Shells{}
+	for name, sh := range on {
+		if !sh.Enabled {
+			log.Debug("shell %s disabled, removing from targets", sh.Name)
+		} else {
+			tmp[name] = sh
+		}
+	}
+	on = tmp
+
 	if len(on) == 0 {
-		log.Fatal("no shell selected by the filter %s", core.Dim(onFilter))
+		log.Fatal("no enabled shell selected by the filter %s", core.Dim(onFilter))
 	}
 
 	log.Info("running %s on %d shells ...\n", core.Dim(command), len(on))
