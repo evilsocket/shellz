@@ -180,7 +180,7 @@ Enable the shell named machineA:
 
 Disable the shell named machineA (commands won't be executed on it):
 
-  shellz -disable machineA
+    shellz -disable machineA
 
 Run the command `id` on each shell:
 
