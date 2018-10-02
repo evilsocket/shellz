@@ -86,7 +86,7 @@ func cmdWorker(job queue.Job) {
 		}
 	} else {
 		took := core.Dim(time.Since(start).String())
-		host := core.Dim(fmt.Sprintf("%s@%s:%d", shell.Identity.Username, shell.Host, shell.Port))
+		host := core.Dim(fmt.Sprintf("%s@%s", shell.Identity.Username, shell.Host))
 		outs := processOutput(out, shell)
 
 		if err != nil {

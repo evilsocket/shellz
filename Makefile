@@ -13,7 +13,7 @@ clean:
 	@rm -rf build
 
 install: build
-	@cp $(TARGET) $(GOPATH)/bin/
+	@mv $(TARGET) $(GOPATH)/bin/
 
 godep:
 	@go get -u github.com/golang/dep/...
