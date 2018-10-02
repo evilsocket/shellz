@@ -188,7 +188,7 @@ Test all shells and disable the not responding ones:
 
 Test two shells and disable them if they don't respond within 1 second:
 
-  shellz -test -on "machineA, machineB" -connection-timeout 1s
+    shellz -test -on "machineA, machineB" -connection-timeout 1s
 
 Run the command `id` on each shell:
 
