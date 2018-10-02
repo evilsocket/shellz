@@ -16,7 +16,7 @@ var (
 	}{
 		{"shellz -list", "list available identities and shells"},
 
-		{"shellz -enable machineA", "enable the shell named machineA"},
+		{"shellz -enable \"machineA, machineB\"", "enable the shells named machineA and machineB"},
 		{"shellz -disable machineA", "disable the shell named machineA (commands won't be executed on it)"},
 
 		{"shellz -run id", "run the command 'id' on each shell"},

@@ -174,9 +174,9 @@ List available identities, plugins and shells:
 
     shellz -list
 
-Enable the shell named machineA:
+Enable the shells named machineA and machineB:
 
-    shellz -enable machineA
+    shellz -enable machineA, machineB
 
 Disable the shell named machineA (commands won't be executed on it):
 
