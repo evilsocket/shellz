@@ -9,41 +9,40 @@ import (
 	"github.com/evilsocket/shellz/models"
 )
 
-func findShells(name string) []models.Shell {
-	found := []models.Shell{}
+func findShells(name string) models.Shells {
+	found := models.Shells{}
 	for _, sh := range shells {
 		if sh.Name == name || strings.HasPrefix(sh.Name, name) {
-			found = append(found, sh)
+			found[sh.Name] = sh
 		}
 	}
 	return found
+}
+
+func doEnabledSelection(m models.Shells, includeDisabled bool) models.Shells {
+	sel := models.Shells{}
+	for _, sh := range m {
+		if includeDisabled || sh.Enabled {
+			sel[sh.Name] = sh
+		} else {
+			log.Debug("skipping disabled shell %s", sh.Name)
+		}
+	}
+	return sel
 }
 
 func doShellSelection(filter string, includeDisabled bool) (error, models.Shells) {
 	sel := models.Shells{}
 
 	if filter == "*" {
-		for _, sh := range shells {
-			if includeDisabled || sh.Enabled {
-				sel[sh.Name] = sh
-			} else {
-				log.Debug("skipping disabled shell %s", sh.Name)
-			}
-		}
-		return nil, sel
+		return nil, doEnabledSelection(shells, includeDisabled)
 	}
 
 	for _, name := range core.CommaSplit(filter) {
 		if found := findShells(name); len(found) == 0 {
 			return fmt.Errorf("can't find shell %s", name), nil
 		} else {
-			for _, sh := range found {
-				if includeDisabled || sh.Enabled {
-					sel[sh.Name] = sh
-				} else {
-					log.Debug("skipping disabled shell %s", sh.Name)
-				}
-			}
+			sel = doEnabledSelection(found, includeDisabled)
 		}
 	}
 
