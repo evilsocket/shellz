@@ -7,6 +7,7 @@ import (
 )
 
 func (p *Plugin) doDefines() error {
+	p.vm.Set("tcp", newTcpManager())
 	p.vm.Set("http", newHttpClient())
 	p.vm.Set("log", func(call otto.FunctionCall) otto.Value {
 		for _, v := range call.ArgumentList {

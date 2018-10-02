@@ -15,14 +15,14 @@ func newHttpClient() httpClient {
 	return httpClient{}
 }
 
-type response struct {
+type httpResponse struct {
 	Error    error
 	Response *http.Response
 	Raw      []byte
 	Body     string
 }
 
-func (c httpClient) Request(method string, uri string, headers map[string]string, form map[string]string) response {
+func (c httpClient) Request(method string, uri string, headers map[string]string, form map[string]string) httpResponse {
 	var reader io.Reader
 	if form != nil {
 		data := url.Values{}
@@ -34,7 +34,7 @@ func (c httpClient) Request(method string, uri string, headers map[string]string
 
 	req, err := http.NewRequest(method, uri, reader)
 	if err != nil {
-		return response{Error: err}
+		return httpResponse{Error: err}
 	}
 
 	if form != nil {
@@ -48,16 +48,16 @@ func (c httpClient) Request(method string, uri string, headers map[string]string
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return response{Error: err}
+		return httpResponse{Error: err}
 	}
 	defer resp.Body.Close()
 
 	raw, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return response{Error: err}
+		return httpResponse{Error: err}
 	}
 
-	return response{
+	return httpResponse{
 		Error:    nil,
 		Response: resp,
 		Raw:      raw,
@@ -65,10 +65,10 @@ func (c httpClient) Request(method string, uri string, headers map[string]string
 	}
 }
 
-func (c httpClient) Get(url string, headers map[string]string) response {
+func (c httpClient) Get(url string, headers map[string]string) httpResponse {
 	return c.Request("GET", url, headers, nil)
 }
 
-func (c httpClient) Post(url string, headers map[string]string, form map[string]string) response {
+func (c httpClient) Post(url string, headers map[string]string, form map[string]string) httpResponse {
 	return c.Request("POST", url, headers, form)
 }
