@@ -94,29 +94,9 @@ func cmdWorker(job queue.Job) {
 }
 
 func runCommand() {
-	if onFilter == "*" {
-		on = shells
-	} else {
-		for _, name := range core.CommaSplit(onFilter) {
-			if shell, found := shells[name]; !found {
-				log.Fatal("can't find shell %s", name)
-			} else {
-				on[name] = shell
-			}
-		}
-	}
-
-	tmp := models.Shells{}
-	for name, sh := range on {
-		if !sh.Enabled {
-			log.Debug("shell %s disabled, removing from targets", sh.Name)
-		} else {
-			tmp[name] = sh
-		}
-	}
-	on = tmp
-
-	if len(on) == 0 {
+	if err, on = doShellSelection(onFilter, false); err != nil {
+		log.Fatal("%s", err)
+	} else if len(on) == 0 {
 		log.Fatal("no enabled shell selected by the filter %s", core.Dim(onFilter))
 	}
 

@@ -94,7 +94,7 @@ func showShellsList() {
 		if !sh.Enabled {
 			en = core.Red("✖")
 		}
-		rows = append(rows, []string{
+		row := []string{
 			core.Bold(sh.Name),
 			core.Dim(sh.Type),
 			sh.Host,
@@ -102,7 +102,15 @@ func showShellsList() {
 			core.Yellow(sh.IdentityName),
 			en,
 			// core.Dim(sh.Path),
-		})
+		}
+
+		if !sh.Enabled {
+			for i, _ := range row {
+				row[i] = core.Dim(row[i])
+			}
+		}
+
+		rows = append(rows, row)
 	}
 
 	fmt.Printf("\n%s\n", core.Bold("shells"))
