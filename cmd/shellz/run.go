@@ -56,40 +56,57 @@ func processOutput(out []byte, shell models.Shell) string {
 	return outs
 }
 
+func onTestFail(sh models.Shell, err error) {
+	log.Warning("shell %s failed with: %s", core.Bold(sh.Name), err)
+	sh.Enabled = false
+	if err := sh.Save(); err != nil {
+		log.Error("error while disabling shell %s: %s", sh.Name, err)
+	}
+}
+
 func cmdWorker(job queue.Job) {
 	start := time.Now()
 	shell := job.(models.Shell)
 	name := shell.Name
 	err, session := shell.NewSession(timeouts)
 	if err != nil {
-		log.Warning("error while creating session for shell %s: %s", name, err)
+		if doTest {
+			onTestFail(shell, err)
+		} else {
+			log.Warning("error while creating session for shell %s: %s", name, err)
+		}
 		return
 	}
 	defer session.Close()
 
 	out, err := session.Exec(command)
-	took := core.Dim(time.Since(start).String())
-	host := core.Dim(fmt.Sprintf("%s@%s:%d", shell.Identity.Username, shell.Host, shell.Port))
-
-	outs := processOutput(out, shell)
-
-	if err != nil {
-		log.Error("%s (%s %s %s) > %s (%s)%s",
-			core.Bold(name),
-			core.Green(shell.Type),
-			host,
-			took,
-			command,
-			core.Red(err.Error()),
-			outs)
+	if doTest {
+		if err != nil {
+			onTestFail(shell, err)
+		}
 	} else {
-		log.Info("%s (%s %s %s) > %s%s",
-			core.Bold(name),
-			core.Green(shell.Type),
-			host,
-			took,
-			core.Blue(command),
-			outs)
+		took := core.Dim(time.Since(start).String())
+		host := core.Dim(fmt.Sprintf("%s@%s:%d", shell.Identity.Username, shell.Host, shell.Port))
+		outs := processOutput(out, shell)
+
+		if err != nil {
+			log.Error("%s (%s %s %s) > %s (%s)%s",
+				core.Bold(name),
+				core.Green(shell.Type),
+				host,
+				took,
+				command,
+				core.Red(err.Error()),
+				outs)
+		} else {
+			log.Info("%s (%s %s %s) > %s%s",
+				core.Bold(name),
+				core.Green(shell.Type),
+				host,
+				took,
+				core.Blue(command),
+				outs)
+		}
 	}
 }
 
@@ -100,7 +117,11 @@ func runCommand() {
 		log.Fatal("no enabled shell selected by the filter %s", core.Dim(onFilter))
 	}
 
-	log.Info("running %s on %d shells ...\n", core.Dim(command), len(on))
+	if doTest {
+		log.Info("testing %d shells ...\n", len(on))
+	} else {
+		log.Info("running %s on %d shells ...\n", core.Dim(command), len(on))
+	}
 
 	for name := range on {
 		wq.Add(on[name])

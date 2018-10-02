@@ -17,6 +17,7 @@ var (
 	on        = models.Shells{}
 	toOutput  = ""
 	doList    = false
+	doTest    = false
 	doEnable  = ""
 	doDisable = ""
 	err       = error(nil)
@@ -35,6 +36,8 @@ func init() {
 
 	flag.StringVar(&doEnable, "enable", "", "Enable the specified shells.")
 	flag.StringVar(&doDisable, "disable", "", "Disable the specified shells.")
+
+	flag.BoolVar(&doTest, "test", doTest, "Attempt to run a test command on the selected shells and disable the ones who failed.")
 
 	flag.StringVar(&command, "run", command, "Command to run on the selected shells.")
 	flag.StringVar(&onFilter, "on", onFilter, "Comma separated list of shell names to select or * for all.")
@@ -67,6 +70,9 @@ func main() {
 		runEnable(doEnable, true)
 	} else if doDisable != "" {
 		runEnable(doDisable, false)
+	} else if doTest {
+		command = "echo 1" // this should run on every OS ^_^
+		runCommand()
 	} else if command != "" {
 		runCommand()
 	} else {

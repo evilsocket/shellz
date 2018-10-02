@@ -19,6 +19,9 @@ var (
 		{"shellz -enable \"machineA, machineB\"", "enable the shells named machineA and machineB"},
 		{"shellz -disable machineA", "disable the shell named machineA (commands won't be executed on it)"},
 
+		{"shellz -test", "test all shells and disable the not responding ones"},
+		{"shellz -test -on \"machineA, machineB\" -connection-timeout 1s", "test two shells and disable them if they don't respond within 1 second"},
+
 		{"shellz -run id", "run the command 'id' on each shell"},
 		{"shellz -run id -on machineA", "run the command 'id' on a single shell named 'machineA'"},
 		{"shellz -run id -on 'machineA, machineB'", "run the command 'id' on machineA and machineB"},

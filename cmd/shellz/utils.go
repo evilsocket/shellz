@@ -42,7 +42,9 @@ func doShellSelection(filter string, includeDisabled bool) (error, models.Shells
 		if found := findShells(name); len(found) == 0 {
 			return fmt.Errorf("can't find shell %s", name), nil
 		} else {
-			sel = doEnabledSelection(found, includeDisabled)
+			for k, v := range doEnabledSelection(found, includeDisabled) {
+				sel[k] = v
+			}
 		}
 	}
 
