@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/evilsocket/shellz/core"
@@ -9,10 +8,10 @@ import (
 	"github.com/evilsocket/shellz/models"
 )
 
-func findShells(name string) models.Shells {
+func doFilterSelection(expr string) models.Shells {
 	found := models.Shells{}
 	for _, sh := range shells {
-		if sh.Name == name || strings.HasPrefix(sh.Name, name) {
+		if sh.Name == expr || strings.HasPrefix(sh.Name, expr) {
 			found[sh.Name] = sh
 		}
 	}
@@ -31,20 +30,16 @@ func doEnabledSelection(m models.Shells, includeDisabled bool) models.Shells {
 	return sel
 }
 
-func doShellSelection(filter string, includeDisabled bool) (error, models.Shells) {
-	sel := models.Shells{}
-
-	if filter == "*" {
+func doShellSelection(csFilters string, includeDisabled bool) (error, models.Shells) {
+	if csFilters == "*" {
 		return nil, doEnabledSelection(shells, includeDisabled)
 	}
 
-	for _, name := range core.CommaSplit(filter) {
-		if found := findShells(name); len(found) == 0 {
-			return fmt.Errorf("can't find shell %s", name), nil
-		} else {
-			for k, v := range doEnabledSelection(found, includeDisabled) {
-				sel[k] = v
-			}
+	sel := models.Shells{}
+	for _, filter := range core.CommaSplit(csFilters) {
+		found := doFilterSelection(filter)
+		for name, shell := range doEnabledSelection(found, includeDisabled) {
+			sel[name] = shell
 		}
 	}
 
