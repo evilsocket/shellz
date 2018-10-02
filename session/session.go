@@ -18,6 +18,7 @@ type Context struct {
 	Username string
 	Password string
 	KeyFile  string
+	Ciphers  []string
 	Timeouts Timeouts
 }
 

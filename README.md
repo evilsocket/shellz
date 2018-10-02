@@ -47,7 +47,20 @@ Now let's create our first shell json file ( `~/.shellz/shells/media.json` ) tha
 }
 ```
 
-By default, shells are considered `ssh`, but also the `telnet` protocol is supported:
+By default, shells are considered `ssh`, in which case you can optionally specify the ciphers your server supports:
+
+
+```json
+{
+    "name": "old-server",
+    "host": "old.server",
+    "port": 22,
+    "identity": "default",
+    "ciphers": ["aes128-cbc", "3des-cbc"]
+}
+```
+
+Also the `telnet` protocol is supported:
 
 ```sh
 cat ~/.shellz/shells/tnas.json

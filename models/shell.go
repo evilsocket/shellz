@@ -20,12 +20,13 @@ const (
 )
 
 type Shell struct {
-	Name         string `json:"name"`
-	Host         string `json:"host"`
-	Port         int    `json:"port"`
-	IdentityName string `json:"identity"`
-	Type         string `json:"type"`
-	Enabled      bool   `json:"enabled"`
+	Name         string   `json:"name"`
+	Host         string   `json:"host"`
+	Port         int      `json:"port"`
+	IdentityName string   `json:"identity"`
+	Type         string   `json:"type"`
+	Ciphers      []string `json:"ciphers"`
+	Enabled      bool     `json:"enabled"`
 
 	Address  net.IP    `json:"-"`
 	Identity *Identity `json:"-"`
@@ -91,6 +92,7 @@ func (sh Shell) NewSession(timeouts session.Timeouts) (error, session.Session) {
 		Username: sh.Identity.Username,
 		Password: sh.Identity.Password,
 		KeyFile:  sh.Identity.KeyFile,
+		Ciphers:  sh.Ciphers,
 		Timeouts: timeouts,
 	}
 

@@ -45,6 +45,9 @@ func ctx2ClientConfig(ctx Context) (error, *ssh.ClientConfig) {
 	}
 
 	return nil, &ssh.ClientConfig{
+		Config: ssh.Config{
+			Ciphers: ctx.Ciphers,
+		},
 		User:            ctx.Username,
 		Auth:            authMethods,
 		Timeout:         ctx.Timeouts.Connect,
