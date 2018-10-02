@@ -67,7 +67,7 @@ func LoadShell(path string, idents Identities) (err error, shell Shell) {
 }
 
 func (sh Shell) Save() error {
-	if data, err := json.Marshal(sh); err != nil {
+	if data, err := json.MarshalIndent(sh, "", "  "); err != nil {
 		return err
 	} else if err = ioutil.WriteFile(sh.Path, data, 0644); err != nil {
 		return err
