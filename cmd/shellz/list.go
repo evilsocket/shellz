@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/evilsocket/shellz/core"
+	"github.com/evilsocket/shellz/session"
 )
 
 func showIdentsList() {
@@ -41,6 +42,26 @@ func showIdentsList() {
 	core.AsTable(os.Stdout, cols, rows)
 }
 
+func showPluginsList() {
+	if session.NumPlugins() > 0 {
+		rows := [][]string{}
+		cols := []string{
+			"Name",
+			"Path",
+		}
+
+		session.EachPlugin(func(p *session.Plugin) {
+			rows = append(rows, []string{
+				core.Bold(p.Name),
+				core.Dim(p.Path),
+			})
+		})
+
+		fmt.Printf("\n%s\n", core.Bold("plugins"))
+		core.AsTable(os.Stdout, cols, rows)
+	}
+}
+
 func showShellsList() {
 	rows := [][]string{}
 	cols := []string{
@@ -71,5 +92,6 @@ func showShellsList() {
 
 func showList() {
 	showIdentsList()
+	showPluginsList()
 	showShellsList()
 }

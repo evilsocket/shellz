@@ -39,3 +39,13 @@ func GetManager(name string) Handler {
 func GetPlugin(name string) *Plugin {
 	return plugins[name]
 }
+
+func NumPlugins() int {
+	return len(plugins)
+}
+
+func EachPlugin(cb func(p *Plugin)) {
+	for _, p := range plugins {
+		cb(p)
+	}
+}
