@@ -117,7 +117,7 @@ func (t *TelnetSession) doReadUntil(s string) (error, string) {
 		if _, err := t.doRead(b); err != nil {
 			return err, ""
 		}
-		log.Debug("  read 0x%x %c", b[0], b[0])
+		// log.Debug("  read 0x%x %c", b[0], b[0])
 		buff += string(b[0])
 	}
 	log.Debug("  => '%s'", buff)

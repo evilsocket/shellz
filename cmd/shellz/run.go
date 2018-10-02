@@ -111,20 +111,22 @@ func cmdWorker(job queue.Job) {
 }
 
 func runCommand() {
-	if err, on = doShellSelection(onFilter, false); err != nil {
+	log.Debug("onFilter = %s", onFilter)
+
+	if err, onShells = doShellSelection(onFilter, false); err != nil {
 		log.Fatal("%s", err)
-	} else if len(on) == 0 {
+	} else if nShells = len(onShells); nShells == 0 {
 		log.Fatal("no enabled shell selected by the filter %s", core.Dim(onFilter))
 	}
 
 	if doTest {
-		log.Debug("testing %d shells ...\n", len(on))
+		log.Debug("testing %d shells ...", nShells)
 	} else {
-		log.Debug("running %s on %d shells ...\n", core.Dim(command), len(on))
+		log.Debug("running %s on %d shells ...", core.Dim(command), nShells)
 	}
 
-	for name := range on {
-		wq.Add(on[name])
+	for name := range onShells {
+		wq.Add(onShells[name])
 	}
 
 	wq.WaitDone()
