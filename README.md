@@ -142,6 +142,32 @@ function Close(obj) {
 }
 ```
 
+Other than a `http` client, also a `tcp` client is available with the following API:
+
+```js
+// this will create the client
+var c = tcp.Connect("1.2.3.4:80");
+if( c == null ) {
+    log("could not connect!");
+    return;
+}
+
+// send some bytes
+c.Write("somebyteshere");
+
+// read some bytes until a newline
+var ret = c.ReadUntil("\n");
+if( ret.Error != null ) {
+    log("error while reading: " + err);
+} else {
+    // print results
+    log("res=" + ret.Raw);
+}
+
+// always close the socket
+c.Close();
+```
+
 ### Examples
 
 List available identities, plugins and shells:
