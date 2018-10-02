@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/evilsocket/shellz/core"
@@ -19,7 +20,14 @@ func showIdentsList() {
 		// "Path",
 	}
 
-	for _, i := range idents {
+	keys := []string{}
+	for k := range idents {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, name := range keys {
+		i := idents[name]
 		key := i.KeyFile
 		if key == "" {
 			key = core.Dim("<empty>")
@@ -74,7 +82,14 @@ func showShellsList() {
 		// "Path",
 	}
 
-	for _, sh := range shells {
+	keys := []string{}
+	for k := range shells {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, name := range keys {
+		sh := shells[name]
 		en := core.Green("✔")
 		if !sh.Enabled {
 			en = core.Red("✖")
