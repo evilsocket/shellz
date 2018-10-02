@@ -118,9 +118,9 @@ func runCommand() {
 	}
 
 	if doTest {
-		log.Info("testing %d shells ...\n", len(on))
+		log.Debug("testing %d shells ...\n", len(on))
 	} else {
-		log.Info("running %s on %d shells ...\n", core.Dim(command), len(on))
+		log.Debug("running %s on %d shells ...\n", core.Dim(command), len(on))
 	}
 
 	for name := range on {

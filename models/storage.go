@@ -14,7 +14,7 @@ func Load() (error, Identities, Shells) {
 	idents := make(Identities)
 	shells := make(Shells)
 
-	log.Info("loading identities from %s ...", Paths["idents"])
+	log.Debug("loading identities from %s ...", Paths["idents"])
 	err := core.Glob(Paths["idents"], "*.json", func(fileName string) error {
 		if err, ident := LoadIdent(fileName); err != nil {
 			return fmt.Errorf("error while loading identity '%s': %s", fileName, err)
@@ -29,7 +29,7 @@ func Load() (error, Identities, Shells) {
 		return err, nil, nil
 	}
 
-	log.Info("loading shells from %s ...", Paths["shells"])
+	log.Debug("loading shells from %s ...", Paths["shells"])
 	err = core.Glob(Paths["shells"], "*.json", func(fileName string) error {
 		if err, shell := LoadShell(fileName, idents); err != nil {
 			return fmt.Errorf("error while loading shell '%s': %s", fileName, err)

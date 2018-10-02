@@ -19,7 +19,7 @@ var (
 )
 
 func LoadPlugins(path string) error {
-	log.Info("loading plugins from %s ...", path)
+	log.Debug("loading plugins from %s ...", path)
 	return core.Glob(path, "*.js", func(fileName string) error {
 		if err, plugin := LoadPlugin(fileName, true); err != nil {
 			return fmt.Errorf("error while loading plugin '%s': %s", fileName, err)
