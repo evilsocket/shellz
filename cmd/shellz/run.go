@@ -67,13 +67,12 @@ func onTestFail(sh models.Shell, err error) {
 func cmdWorker(job queue.Job) {
 	start := time.Now()
 	shell := job.(models.Shell)
-	name := shell.Name
 	err, session := shell.NewSession(timeouts)
 	if err != nil {
 		if doTest {
 			onTestFail(shell, err)
 		} else {
-			log.Warning("error while creating session for shell %s: %s", name, err)
+			log.Warning("error while creating session for shell %s: %s", shell.Name, err)
 		}
 		return
 	}
@@ -88,10 +87,9 @@ func cmdWorker(job queue.Job) {
 		took := core.Dim(time.Since(start).String())
 		host := core.Dim(fmt.Sprintf("%s@%s", shell.Identity.Username, shell.Host))
 		outs := processOutput(out, shell)
-
 		if err != nil {
 			log.Error("%s (%s %s %s) > %s (%s)%s",
-				core.Bold(name),
+				core.Bold(shell.Name),
 				core.Green(shell.Type),
 				host,
 				took,
@@ -100,7 +98,7 @@ func cmdWorker(job queue.Job) {
 				outs)
 		} else {
 			log.Info("%s (%s %s %s) > %s%s",
-				core.Bold(name),
+				core.Bold(shell.Name),
 				core.Green(shell.Type),
 				host,
 				took,
