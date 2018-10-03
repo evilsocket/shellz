@@ -23,7 +23,7 @@ func runEnable(filter string, enable bool) {
 			if err := shell.Save(); err != nil {
 				log.Error("error while setting shell %s to %s: %s", shell.Name, word, err)
 			} else {
-				log.Info("shell %s succesfully %s", shell.Name, word)
+				log.Info("shell %s successfully %s", shell.Name, word)
 			}
 		}
 	}
