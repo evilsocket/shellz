@@ -107,7 +107,7 @@ func showShellsList() {
 		}
 
 		if !sh.Enabled {
-			for i, _ := range row {
+			for i := range row {
 				row[i] = core.Dim(row[i])
 			}
 		}
