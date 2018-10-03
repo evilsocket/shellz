@@ -52,9 +52,7 @@ func Raw(format string, args ...interface{}) {
 }
 
 func color(level int, format string, args ...interface{}) {
-	label := Labels[level]
-	color := Colors[level]
-	Raw(color+label+core.RESET+" "+format, args...)
+	Raw(Colors[level]+Labels[level]+core.RESET+" "+format, args...)
 }
 
 func Info(format string, args ...interface{}) {
