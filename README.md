@@ -114,7 +114,7 @@ var headers = {
  * to the endpoint and store the socket on a more complex Object.
  */
 function Create(ctx) {
-    // log("Create(" + ctx + ")");
+    log.Debug("Create(" + ctx + ")");
     return ctx;
 }
 
@@ -124,33 +124,35 @@ function Create(ctx) {
  * command itself.
  */
 function Exec(ctx, cmd) {
-    // log("running " + cmd + " on " + ctx.Host);
-
+    log.Debug("running " + cmd + " on " + ctx.Host);
     /* 
      * OR
      *
      * var resp = http.Post(ctx.Host, headers, {"cmd":cmd});
      */
     var resp = http.Get(ctx.Host + "?cmd=" + cmd, headers)
-
-    return resp.Error ? resp.Error : resp.Raw;
+    if( resp.Error ) {
+        log.Error("error while running " + cmd + ": " + resp.Error);
+        return resp.Error;
+    }
+    return resp.Raw;
 }
 
 /*
  * Used to finalize the state of the object (close sockets, etc).
  */
 function Close(obj) {
-    // log("Close(" + ctx + ")");
+    log.Debug("Close(" + ctx + ")");
 }
 ```
 
-Other than a `http` client, also a `tcp` client is available with the following API:
+Other than the `log` interface and the `http` client, also a `tcp` client is available with the following API:
 
 ```js
 // this will create the client
 var c = tcp.Connect("1.2.3.4:80");
 if( c == null ) {
-    log("could not connect!");
+    log.Error("could not connect!");
     return;
 }
 
@@ -160,10 +162,10 @@ c.Write("somebyteshere");
 // read some bytes until a newline
 var ret = c.ReadUntil("\n");
 if( ret.Error != null ) {
-    log("error while reading: " + err);
+    log.Error("error while reading: " + err);
 } else {
     // print results
-    log("res=" + ret.Raw);
+    log.Info("res=" + ret.Raw);
 }
 
 // always close the socket
