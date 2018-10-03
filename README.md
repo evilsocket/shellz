@@ -42,18 +42,20 @@ Now let's create our first shell json file ( `~/.shellz/shells/media.json` ) tha
 {
     "name": "media-server",
     "host": "media.server",
+    "groups": ["servers", "media", "whatever"],
     "port": 22,
     "identity": "default"
 }
 ```
 
-By default, shells are considered `ssh`, in which case you can optionally specify the ciphers your server supports:
+Shells can (optionally) be grouped (with a defaut `all` group containing all of them) and, by default, they are considered `ssh`, in which case you can also specify the ciphers your server supports:
 
 
 ```json
 {
     "name": "old-server",
     "host": "old.server",
+    "groups": ["servers", "legacy"],
     "port": 22,
     "identity": "default",
     "ciphers": ["aes128-cbc", "3des-cbc"]
@@ -178,6 +180,10 @@ Enable the shells named machineA and machineB:
 
     shellz -enable machineA, machineB
 
+Enable shells of the group `web`:
+
+    shellz -enable web
+
 Disable the shell named machineA (commands won't be executed on it):
 
     shellz -disable machineA
@@ -190,7 +196,7 @@ Test two shells and disable them if they don't respond within 1 second:
 
     shellz -test -on "machineA, machineB" -connection-timeout 1s
 
-Run the command `id` on each shell:
+Run the command `id` on each shell ( with `-to` default to `all`):
 
     shellz -run id
 
@@ -201,6 +207,10 @@ Run the command `id` on a single shell named `machineA`:
 Run the command `id` on `machineA` and `machineB`:
 
     shellz -run id -on 'machineA, machineB'
+
+Run the command `id` on shells of group `web`:
+
+    shellz -run id -on web
 
 Run the command `uptime` on every shell and append all outputs to the `all.txt` file:
 

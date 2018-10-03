@@ -35,14 +35,14 @@ func main() {
 		log.Raw(core.Banner)
 	}
 
-	if err, idents, shells = models.Load(); err != nil {
+	if err, Idents, Shells, Groups = models.Load(); err != nil {
 		log.Fatal("error while loading data: %s", err)
-	} else if len(shells) == 0 {
+	} else if len(Shells) == 0 {
 		log.Fatal("no shells found on the system, start creating json files inside %s", models.Paths["shells"])
 	} else if err = session.LoadPlugins(models.Paths["plugins"]); err != nil {
 		log.Fatal("error while loading plugins: %s", err)
 	} else {
-		log.Debug("loaded %d identities and %d shells", len(idents), len(shells))
+		log.Debug("loaded %d identities and %d shells", len(Idents), len(Shells))
 	}
 
 	if doList {

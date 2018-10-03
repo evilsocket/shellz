@@ -8,8 +8,12 @@ import (
 )
 
 var (
+	Idents = models.Identities(nil)
+	Shells = models.Shells(nil)
+	Groups = models.Groups(nil)
+
 	command   = ""
-	onFilter  = "*"
+	onFilter  = "all"
 	onShells  = models.Shells{}
 	nShells   = 0
 	toOutput  = ""
@@ -19,8 +23,6 @@ var (
 	doDisable = ""
 	noBanner  = false
 	err       = error(nil)
-	idents    = models.Identities(nil)
-	shells    = models.Shells(nil)
 
 	timeouts = session.Timeouts{
 		Connect: 5 * time.Second,

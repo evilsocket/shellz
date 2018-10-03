@@ -27,6 +27,7 @@ type Shell struct {
 	Type         string   `json:"type"`
 	Ciphers      []string `json:"ciphers"`
 	Enabled      bool     `json:"enabled"`
+	Groups       []string `json:"groups"`
 
 	Address  net.IP    `json:"-"`
 	Identity *Identity `json:"-"`

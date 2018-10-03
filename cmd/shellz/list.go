@@ -21,13 +21,13 @@ func showIdentsList() {
 	}
 
 	keys := []string{}
-	for k := range idents {
+	for k := range Idents {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 
 	for _, name := range keys {
-		i := idents[name]
+		i := Idents[name]
 		key := i.KeyFile
 		if key == "" {
 			key = core.Dim("<empty>")
@@ -74,6 +74,7 @@ func showShellsList() {
 	rows := [][]string{}
 	cols := []string{
 		"Name",
+		"Groups",
 		"Type",
 		"Host",
 		"Port",
@@ -83,19 +84,20 @@ func showShellsList() {
 	}
 
 	keys := []string{}
-	for k := range shells {
+	for k := range Shells {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 
 	for _, name := range keys {
-		sh := shells[name]
+		sh := Shells[name]
 		en := core.Green("✔")
 		if !sh.Enabled {
 			en = core.Red("✖")
 		}
 		row := []string{
 			core.Bold(sh.Name),
+			core.Blue(strings.Join(sh.Groups, ", ")),
 			core.Dim(sh.Type),
 			sh.Host,
 			fmt.Sprintf("%d", sh.Port),

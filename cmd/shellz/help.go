@@ -31,7 +31,7 @@ var (
 )
 
 func showHelp() {
-	log.Info("none of the -run or -list parameters have been specified")
+	log.Info("none of the -run, -test or -list parameters have been specified")
 
 	fmt.Println()
 	fmt.Printf("Usage:\n\n")

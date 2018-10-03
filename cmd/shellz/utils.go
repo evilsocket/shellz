@@ -9,8 +9,16 @@ import (
 )
 
 func doFilterSelection(expr string) models.Shells {
+	// first match by group, full match
+	for group, shells := range Groups {
+		if expr == group {
+			return shells
+		}
+	}
+
+	// then by shell name, full or prefix
 	found := models.Shells{}
-	for _, sh := range shells {
+	for _, sh := range Shells {
 		if sh.Name == expr || strings.HasPrefix(sh.Name, expr) {
 			found[sh.Name] = sh
 		}
@@ -31,10 +39,6 @@ func doEnabledSelection(m models.Shells, includeDisabled bool) models.Shells {
 }
 
 func doShellSelection(csFilters string, includeDisabled bool) (error, models.Shells) {
-	if csFilters == "*" {
-		return nil, doEnabledSelection(shells, includeDisabled)
-	}
-
 	sel := models.Shells{}
 	for _, filter := range core.CommaSplit(csFilters) {
 		found := doFilterSelection(filter)

@@ -9,10 +9,12 @@ import (
 
 type Identities map[string]Identity
 type Shells map[string]Shell
+type Groups map[string]Shells
 
-func Load() (error, Identities, Shells) {
+func Load() (error, Identities, Shells, Groups) {
 	idents := make(Identities)
 	shells := make(Shells)
+	groups := make(Groups)
 
 	log.Debug("loading identities from %s ...", Paths["idents"])
 	err := core.Glob(Paths["idents"], "*.json", func(fileName string) error {
@@ -26,7 +28,7 @@ func Load() (error, Identities, Shells) {
 		return nil
 	})
 	if err != nil {
-		return err, nil, nil
+		return err, nil, nil, nil
 	}
 
 	log.Debug("loading shells from %s ...", Paths["shells"])
@@ -41,8 +43,20 @@ func Load() (error, Identities, Shells) {
 		return nil
 	})
 	if err != nil {
-		return err, nil, nil
+		return err, nil, nil, nil
 	}
 
-	return nil, idents, shells
+	log.Debug("creating groups ...")
+	for _, sh := range shells {
+		for _, group := range append(sh.Groups, "all") {
+			ref, found := groups[group]
+			if found == false {
+				ref = make(Shells)
+				groups[group] = ref
+			}
+			ref[sh.Name] = sh
+		}
+	}
+
+	return nil, idents, shells, groups
 }

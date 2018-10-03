@@ -5,10 +5,10 @@ import (
 )
 
 func runEnable(filter string, enable bool) {
-	if err, onShells = doShellSelection(filter, false); err != nil {
+	if err, onShells = doShellSelection(filter, true); err != nil {
 		log.Fatal("%s", err)
 	} else if nShells = len(onShells); nShells == 0 {
-		log.Fatal("no shell selected by the filter %s", onFilter)
+		log.Fatal("no shell selected by the filter %s", filter)
 	}
 
 	word := "enabled"
@@ -17,7 +17,7 @@ func runEnable(filter string, enable bool) {
 	}
 	for _, shell := range onShells {
 		if shell.Enabled == enable {
-			log.Info("shell %s already %s", shell.Name, word)
+			log.Debug("shell %s already %s", shell.Name, word)
 		} else {
 			shell.Enabled = enable
 			if err := shell.Save(); err != nil {
