@@ -5,7 +5,13 @@ import (
 	"net"
 )
 
-type tcpManager struct{}
+type tcpPackage struct{}
+
+var tcp = tcpPackage{}
+
+func getTCP() tcpPackage {
+	return tcp
+}
 
 type tcpClient struct {
 	con    net.Conn
@@ -18,11 +24,7 @@ type tcpResponse struct {
 	Raw   []byte
 }
 
-func newTcpManager() tcpManager {
-	return tcpManager{}
-}
-
-func (m tcpManager) Connect(host string) *tcpClient {
+func (m tcpPackage) Connect(host string) *tcpClient {
 	con, err := net.Dial("tcp", host)
 	if err != nil {
 		return nil

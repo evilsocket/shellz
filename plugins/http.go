@@ -8,11 +8,13 @@ import (
 	"net/url"
 )
 
-type httpClient struct {
+type httpPackage struct {
 }
 
-func newHttpClient() httpClient {
-	return httpClient{}
+var hp = httpPackage{}
+
+func getHTTP() httpPackage {
+	return hp
 }
 
 type httpResponse struct {
@@ -22,7 +24,7 @@ type httpResponse struct {
 	Body     string
 }
 
-func (c httpClient) Request(method string, uri string, headers map[string]string, form map[string]string) httpResponse {
+func (c httpPackage) Request(method string, uri string, headers map[string]string, form map[string]string) httpResponse {
 	var reader io.Reader
 	if form != nil {
 		data := url.Values{}
@@ -65,10 +67,10 @@ func (c httpClient) Request(method string, uri string, headers map[string]string
 	}
 }
 
-func (c httpClient) Get(url string, headers map[string]string) httpResponse {
+func (c httpPackage) Get(url string, headers map[string]string) httpResponse {
 	return c.Request("GET", url, headers, nil)
 }
 
-func (c httpClient) Post(url string, headers map[string]string, form map[string]string) httpResponse {
+func (c httpPackage) Post(url string, headers map[string]string, form map[string]string) httpResponse {
 	return c.Request("POST", url, headers, form)
 }

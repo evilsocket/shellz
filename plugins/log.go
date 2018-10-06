@@ -4,24 +4,26 @@ import (
 	"github.com/evilsocket/shellz/log"
 )
 
-type logManager struct{}
+type logPackage struct{}
 
-func newLogManager() logManager {
-	return logManager{}
+var p = logPackage{}
+
+func getLOG() logPackage {
+	return p
 }
 
-func (l logManager) Debug(m string) {
+func (l logPackage) Debug(m string) {
 	log.Debug("%s", m)
 }
 
-func (l logManager) Info(m string) {
+func (l logPackage) Info(m string) {
 	log.Info("%s", m)
 }
 
-func (l logManager) Warning(m string) {
+func (l logPackage) Warning(m string) {
 	log.Error("%s", m)
 }
 
-func (l logManager) Error(m string) {
+func (l logPackage) Error(m string) {
 	log.Error("%s", m)
 }

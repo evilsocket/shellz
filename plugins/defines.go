@@ -1,8 +1,8 @@
 package plugins
 
 func (p *Plugin) doDefines() error {
-	p.vm.Set("log", newLogManager())
-	p.vm.Set("tcp", newTcpManager())
-	p.vm.Set("http", newHttpClient())
+	p.vm.Set("log", getLOG())
+	p.vm.Set("tcp", getTCP())
+	p.vm.Set("http", getHTTP())
 	return nil
 }
