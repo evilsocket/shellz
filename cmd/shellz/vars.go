@@ -17,6 +17,7 @@ var (
 	onShells  = models.Shells{}
 	nShells   = 0
 	toOutput  = ""
+	doForce   = false
 	doList    = false
 	doTest    = false
 	doEnable  = ""

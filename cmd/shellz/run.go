@@ -111,7 +111,7 @@ func cmdWorker(job queue.Job) {
 func runCommand() {
 	log.Debug("onFilter = %s", onFilter)
 
-	if err, onShells = doShellSelection(onFilter, false); err != nil {
+	if err, onShells = doShellSelection(onFilter, doForce); err != nil {
 		log.Fatal("%s", err)
 	} else if nShells = len(onShells); nShells == 0 {
 		log.Fatal("no enabled shell selected by the filter %s", core.Dim(onFilter))
