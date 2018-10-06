@@ -48,7 +48,7 @@ Now let's create our first shell json file ( `~/.shellz/shells/media.json` ) tha
 }
 ```
 
-Shells can (optionally) be grouped (with a defaut `all` group containing all of them) and, by default, they are considered `ssh`, in which case you can also specify the ciphers your server supports:
+Shells can (optionally) be grouped (with a default `all` group containing all of them) and, by default, they are considered `ssh`, in which case you can also specify the ciphers your server supports:
 
 
 ```json
