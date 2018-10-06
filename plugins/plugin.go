@@ -1,11 +1,12 @@
-package session
+package plugins
 
 import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
-	"sync"
+
+	"github.com/evilsocket/shellz/session"
 
 	"github.com/robertkrimen/otto"
 )
@@ -46,7 +47,7 @@ func (p *Plugin) Clone() *Plugin {
 	return clone
 }
 
-func (p *Plugin) Create(ctx Context) (error, otto.Value) {
+func (p *Plugin) Create(ctx session.Context) (error, otto.Value) {
 	if err := p.vm.Set("ctx", ctx); err != nil {
 		return err, otto.UndefinedValue()
 	} else if _, err := p.vm.Run(p.cbCreate); err != nil {
@@ -108,49 +109,4 @@ func (p *Plugin) compileCall(script **otto.Script, name string, call string) err
 		return err
 	}
 	return nil
-}
-
-type PluginSession struct {
-	sync.Mutex
-	plugin *Plugin
-}
-
-func NewPluginSession(plugin *Plugin, ctx Context) (error, Session) {
-	s := &PluginSession{
-		plugin: plugin,
-	}
-
-	if err, _ := s.plugin.Create(ctx); err != nil {
-		return err, nil
-	}
-
-	return nil, s
-}
-
-func (t *PluginSession) Type() string {
-	return "plugin"
-}
-
-func (p *PluginSession) Exec(cmd string) ([]byte, error) {
-	p.Lock()
-	defer p.Unlock()
-
-	if err, ret := p.plugin.Exec(cmd); err != nil {
-		return nil, err
-	} else if ret.IsNull() || ret.IsUndefined() {
-		return []byte{}, nil
-	} else if exported, err := ret.Export(); err != nil {
-		return nil, err
-	} else if array, ok := exported.([]byte); !ok {
-		return nil, fmt.Errorf("error while converting %v to []byte", exported)
-	} else {
-		return array, nil
-	}
-}
-
-func (p *PluginSession) Close() {
-	p.Lock()
-	defer p.Unlock()
-
-	p.plugin.Close()
 }

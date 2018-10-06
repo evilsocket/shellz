@@ -1,4 +1,4 @@
-package session
+package plugins
 
 import (
 	"bufio"

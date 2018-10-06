@@ -1,4 +1,4 @@
-package session
+package plugins
 
 import (
 	"github.com/evilsocket/shellz/log"

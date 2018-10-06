@@ -1,4 +1,4 @@
-package session
+package plugins
 
 func (p *Plugin) doDefines() error {
 	p.vm.Set("log", newLogManager())

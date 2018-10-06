@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/shellz/plugins"
 	"github.com/evilsocket/shellz/session"
 )
 
@@ -98,12 +99,12 @@ func (sh Shell) NewSession(timeouts session.Timeouts) (error, session.Session) {
 	}
 
 	// check the built in session managers
-	if mgr := session.GetManager(sh.Type); mgr != nil {
+	if mgr := session.Get(sh.Type); mgr != nil {
 		return mgr(ctx)
 	}
 	// check for user provided plugins
-	if plugin := session.GetPlugin(sh.Type); plugin != nil {
-		return session.NewPluginSession(plugin.Clone(), ctx)
+	if plugin := plugins.Get(sh.Type); plugin != nil {
+		return plugins.ForSession(plugin.Clone(), ctx)
 	}
 
 	return fmt.Errorf("session type %s for shell %s is not supported", sh.Type, sh.Name), nil
