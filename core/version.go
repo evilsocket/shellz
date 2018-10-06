@@ -7,7 +7,7 @@ import (
 
 const (
 	Name    = "shellz"
-	Version = "1.1.0"
+	Version = "1.2.0"
 	Author  = "Simone 'evilsocket' Margaritelli"
 	Website = "https://evilsocket.net/"
 )
