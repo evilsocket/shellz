@@ -64,10 +64,22 @@ func onTestFail(sh models.Shell, err error) {
 	}
 }
 
+func onTestSuccess(sh models.Shell) {
+	log.Info("shell %s is working", core.Bold(sh.Name))
+	if !sh.Enabled {
+		log.Debug("enabling shell %s", sh.Name)
+		sh.Enabled = true
+		if err := sh.Save(); err != nil {
+			log.Error("error while enabling shell %s: %s", sh.Name, err)
+		}
+	}
+}
+
 func cmdWorker(job queue.Job) {
 	start := time.Now()
 	shell := job.(models.Shell)
 	err, session := shell.NewSession(timeouts)
+
 	if err != nil {
 		if doTest {
 			onTestFail(shell, err)
@@ -82,6 +94,8 @@ func cmdWorker(job queue.Job) {
 	if doTest {
 		if err != nil {
 			onTestFail(shell, err)
+		} else {
+			onTestSuccess(shell)
 		}
 	} else {
 		took := core.Dim(time.Since(start).String())
@@ -110,11 +124,10 @@ func cmdWorker(job queue.Job) {
 
 func runCommand() {
 	log.Debug("onFilter = %s", onFilter)
-
 	if err, onShells = doShellSelection(onFilter, doForce); err != nil {
 		log.Fatal("%s", err)
 	} else if nShells = len(onShells); nShells == 0 {
-		log.Fatal("no enabled shell selected by the filter %s", core.Dim(onFilter))
+		log.Fatal("no enabled shell selected by the filter %s (use the -force argument to select disabled shells)", core.Dim(onFilter))
 	}
 
 	if doTest {
