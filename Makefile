@@ -6,7 +6,7 @@ deps: godep
 	@dep ensure
 
 build: deps
-	@go build -o $(TARGET) cmd/shellz/*.go
+	@go build -ldflags="-s -w" -o $(TARGET) cmd/shellz/*.go
 
 clean:
 	@rm -rf $(TARGET)
