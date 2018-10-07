@@ -3,56 +3,20 @@ package log
 import (
 	"fmt"
 	"os"
-	"sync"
 
 	"github.com/evilsocket/shellz/core"
-)
-
-const (
-	DEBUG = iota
-	INFO
-	OUTPUT
-	IMPORTANT
-	WARNING
-	ERROR
-	FATAL
-)
-
-var (
-	DebugMessages = false
-	lock          = &sync.Mutex{}
-
-	Labels = map[int]string{
-		DEBUG:     "dbg",
-		INFO:      "inf",
-		OUTPUT:    "out",
-		IMPORTANT: "imp",
-		WARNING:   "war",
-		ERROR:     "err",
-		FATAL:     "!!!",
-	}
-
-	Colors = map[int]string{
-		DEBUG:     core.DIM + core.FG_BLACK + core.BG_DGRAY,
-		INFO:      core.FG_WHITE + core.BG_GREEN,
-		OUTPUT:    core.DIM + core.FG_BLACK + core.BG_DGRAY,
-		IMPORTANT: core.FG_WHITE + core.BG_LBLUE,
-		WARNING:   core.FG_WHITE + core.BG_YELLOW,
-		ERROR:     core.FG_WHITE + core.BG_RED,
-		FATAL:     core.FG_WHITE + core.BG_RED + core.BOLD,
-	}
 )
 
 func Raw(format string, args ...interface{}) {
 	lock.Lock()
 	defer lock.Unlock()
 
-	fmt.Fprintf(os.Stdout, format, args...)
-	fmt.Fprintf(os.Stdout, "\n")
+	fmt.Fprintf(writer, format, args...)
+	fmt.Fprintf(writer, "\n")
 }
 
 func color(level int, format string, args ...interface{}) {
-	Raw(Colors[level]+Labels[level]+core.RESET+" "+format, args...)
+	Raw(colors[level]+labels[level]+core.RESET+" "+format, args...)
 }
 
 func Info(format string, args ...interface{}) {

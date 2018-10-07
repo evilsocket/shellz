@@ -27,11 +27,17 @@ func init() {
 	flag.DurationVar(&timeouts.Write, "write-timeout", timeouts.Write, "Write timeout.")
 
 	flag.BoolVar(&log.DebugMessages, "debug", log.DebugMessages, "Enable debug messages.")
+	flag.StringVar(&log.File, "log-file", log.File, "Log messages on this file instead of the standard output.")
 	flag.BoolVar(&noBanner, "no-banner", noBanner, "Don't print the initial banner.")
 	flag.Parse()
 }
 
 func main() {
+	log.Init()
+	defer func() {
+		log.Close()
+	}()
+
 	if !noBanner {
 		log.Raw(core.Banner)
 	}
