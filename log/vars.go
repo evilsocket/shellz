@@ -5,6 +5,8 @@ import (
 	"sync"
 
 	"github.com/evilsocket/shellz/core"
+
+	"github.com/mattn/go-isatty"
 )
 
 const (
@@ -18,6 +20,7 @@ const (
 )
 
 var (
+	NoColors      = false
 	DebugMessages = false
 	File          = ""
 
@@ -45,6 +48,12 @@ var (
 	writer = os.Stdout
 )
 
+func termHasColors() bool {
+	return os.Getenv("TERM") != "dumb" &&
+		os.Getenv("TERM") != "" &&
+		(isatty.IsTerminal(os.Stdout.Fd()) || isatty.IsCygwinTerminal(os.Stdout.Fd()))
+}
+
 func Init() {
 	if File != "" {
 		var err error
@@ -52,10 +61,31 @@ func Init() {
 			panic(err)
 		}
 	}
+
+	if NoColors || !termHasColors() {
+		for level := range colors {
+			colors[level] = ""
+		}
+
+		core.BOLD = ""
+		core.DIM = ""
+		core.RED = ""
+		core.GREEN = ""
+		core.BLUE = ""
+		core.YELLOW = ""
+		core.FG_BLACK = ""
+		core.FG_WHITE = ""
+		core.BG_DGRAY = ""
+		core.BG_RED = ""
+		core.BG_GREEN = ""
+		core.BG_YELLOW = ""
+		core.BG_LBLUE = ""
+		core.RESET = ""
+	}
 }
 
 func Close() {
-	if wrter != os.Stdout {
+	if writer != os.Stdout {
 		writer.Close()
 	}
 }

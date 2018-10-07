@@ -28,6 +28,7 @@ func init() {
 
 	flag.BoolVar(&log.DebugMessages, "debug", log.DebugMessages, "Enable debug messages.")
 	flag.StringVar(&log.File, "log-file", log.File, "Log messages on this file instead of the standard output.")
+	flag.BoolVar(&log.NoColors, "no-colors", log.NoColors, "Disable colors for log messages.")
 	flag.BoolVar(&noBanner, "no-banner", noBanner, "Don't print the initial banner.")
 	flag.Parse()
 }

@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  digest = "1:0981502f9816113c9c8c4ac301583841855c8cf4da8c72f696b3ebedf6d0e4e5"
+  name = "github.com/mattn/go-isatty"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c"
+  version = "v0.0.4"
+
+[[projects]]
   branch = "master"
   digest = "1:8ca619fd5ff6877c2b638dcc6f0dafd70dd54117c0ab64456722166edcc7e305"
   name = "github.com/reiver/go-oi"
@@ -50,6 +58,14 @@
   revision = "5295e8364332db77d75fce11f1d19c053919a9c9"
 
 [[projects]]
+  branch = "master"
+  digest = "1:c2789211d4035eb0843b85958ecf7cb4a5ea91c2d4decee652c94ce898e433cb"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  pruneopts = "UT"
+  revision = "4497e2df6f9e69048a54498c7affbbec3294ad47"
+
+[[projects]]
   digest = "1:9935525a8c49b8434a0b0a54e1980e94a6fae73aaff45c5d33ba8dff69de123e"
   name = "gopkg.in/sourcemap.v1"
   packages = [
@@ -64,6 +80,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/mattn/go-isatty",
     "github.com/reiver/go-telnet",
     "github.com/robertkrimen/otto",
     "golang.org/x/crypto/ssh",
