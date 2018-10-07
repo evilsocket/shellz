@@ -5,8 +5,6 @@ import (
 	"sync"
 
 	"github.com/evilsocket/shellz/core"
-
-	"github.com/mattn/go-isatty"
 )
 
 const (
@@ -48,12 +46,6 @@ var (
 	writer = os.Stdout
 )
 
-func termHasColors() bool {
-	return os.Getenv("TERM") != "dumb" &&
-		os.Getenv("TERM") != "" &&
-		(isatty.IsTerminal(os.Stdout.Fd()) || isatty.IsCygwinTerminal(os.Stdout.Fd()))
-}
-
 func Init() {
 	if File != "" {
 		var err error
@@ -62,7 +54,7 @@ func Init() {
 		}
 	}
 
-	if NoColors || !termHasColors() {
+	if NoColors {
 		for level := range colors {
 			colors[level] = ""
 		}

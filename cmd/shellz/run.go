@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"sync"
+	"sync/atomic"
 	"text/template"
 	"time"
 
@@ -12,11 +13,26 @@ import (
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
 	"github.com/evilsocket/shellz/queue"
+
+	"github.com/dustin/go-humanize"
 )
+
+type statistics struct {
+	Started       time.Time
+	Done          time.Time
+	Shells        uint64
+	Success       uint64
+	Failed        uint64
+	FailedConnect uint64
+	FailedExec    uint64
+	Output        uint64
+	AvgTime       uint64
+}
 
 var (
 	toOutputLock = sync.Mutex{}
 	wq           = queue.New(-1, cmdWorker)
+	stats        = statistics{}
 )
 
 func toOutputFilename(shell models.Shell) string {
@@ -81,12 +97,32 @@ func onTestSuccess(sh models.Shell) {
 	}
 }
 
+func trackSuccess() {
+	atomic.AddUint64(&stats.Success, 1)
+}
+
+func trackFailure(connect bool) {
+	atomic.AddUint64(&stats.Failed, 1)
+	if connect {
+		atomic.AddUint64(&stats.FailedConnect, 1)
+	} else {
+		atomic.AddUint64(&stats.FailedExec, 1)
+	}
+}
+
+func trackOutput(out []byte) {
+	if out != nil {
+		atomic.AddUint64(&stats.Output, uint64(len(out)))
+	}
+}
+
 func cmdWorker(job queue.Job) {
 	start := time.Now()
 	shell := job.(models.Shell)
 
 	err, session := shell.NewSession(timeouts)
 	if err != nil {
+		trackFailure(true)
 		if doTest {
 			onTestFail(shell, err)
 		} else {
@@ -97,14 +133,18 @@ func cmdWorker(job queue.Job) {
 	defer session.Close()
 
 	out, err := session.Exec(command)
+	took := core.Dim(time.Since(start).String())
+	trackOutput(out)
+
 	if doTest {
 		if err != nil {
+			trackFailure(false)
 			onTestFail(shell, err)
 		} else {
+			trackSuccess()
 			onTestSuccess(shell)
 		}
 	} else {
-		took := core.Dim(time.Since(start).String())
 		outs := processOutput(out, shell)
 		host := ""
 		if shell.Identity.Username != "" {
@@ -114,6 +154,7 @@ func cmdWorker(job queue.Job) {
 		}
 
 		if err != nil {
+			trackFailure(false)
 			log.Error("%s (%s %s %s) > %s (%s)%s",
 				core.Bold(shell.Name),
 				core.Green(shell.Type),
@@ -123,6 +164,7 @@ func cmdWorker(job queue.Job) {
 				core.Red(err.Error()),
 				outs)
 		} else {
+			trackSuccess()
 			log.Info("%s (%s %s %s) > %s%s",
 				core.Bold(shell.Name),
 				core.Green(shell.Type),
@@ -131,6 +173,27 @@ func cmdWorker(job queue.Job) {
 				core.Blue(command),
 				outs)
 		}
+	}
+}
+
+func viewStats() {
+	log.Raw(core.Dim("_______________________"))
+	log.Raw(core.Bold("Statistics\n"))
+
+	totTime := stats.Done.Sub(stats.Started)
+	avgTime := time.Duration(0)
+	if stats.Success > 0 {
+		avgTime = time.Duration(uint64(totTime) / stats.Success)
+	}
+
+	log.Raw("total shells : %d", stats.Shells)
+	log.Raw("total time   : %s (%s/shell avg)", totTime, avgTime)
+	log.Raw("total output : %s", humanize.Bytes(stats.Output))
+	log.Raw(core.Green("ok           : %d"), stats.Success)
+	if stats.Failed > 0 {
+		log.Raw(core.Red("ko           : %d ( %d connect / %d exec )"), stats.Failed, stats.FailedConnect, stats.FailedExec)
+	} else {
+		log.Raw(core.Dim("ko           : 0"))
 	}
 }
 
@@ -148,9 +211,17 @@ func runCommand() {
 		log.Debug("running %s on %d shells ...", core.Dim(command), nShells)
 	}
 
+	stats.Shells = uint64(nShells)
+	stats.Started = time.Now()
+
 	for name := range onShells {
 		wq.Add(onShells[name])
 	}
 
 	wq.WaitDone()
+
+	stats.Done = time.Now()
+	if doStats {
+		viewStats()
+	}
 }

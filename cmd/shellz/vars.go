@@ -22,6 +22,7 @@ var (
 	doTest    = false
 	doEnable  = ""
 	doDisable = ""
+	doStats   = false
 	noBanner  = false
 	err       = error(nil)
 

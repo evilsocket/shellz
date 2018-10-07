@@ -206,6 +206,10 @@ Run the command `id` on each shell ( with `-to` default to `all`):
 
     shellz -run id
 
+Run the command 'id' on each shell and print some statistics once finished:
+
+    shellz -run id -stats
+
 Run the command `id` on a single shell named `machineA`:
 
     shellz -run id -on machineA
