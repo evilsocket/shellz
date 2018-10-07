@@ -14,7 +14,8 @@ var (
 		cmd  string
 		help string
 	}{
-		{"shellz -list", "list available identities and shells"},
+		{"shellz -list", "list all available identities and shells"},
+		{"shellz -list -on web", "list all available identities and shells of the group web"},
 
 		{"shellz -enable \"machineA, machineB\"", "enable the shells named machineA and machineB"},
 		{"shellz -disable machineA", "disable the shell named machineA (commands won't be executed on it)"},

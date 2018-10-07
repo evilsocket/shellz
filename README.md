@@ -178,6 +178,10 @@ List available identities, plugins and shells:
 
     shellz -list
 
+List all available identities and shells of the group web:
+
+    shellz -list -on web
+
 Enable the shells named machineA and machineB:
 
     shellz -enable machineA, machineB

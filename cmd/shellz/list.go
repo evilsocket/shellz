@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/evilsocket/shellz/core"
+	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/plugins"
 )
 
@@ -83,14 +84,20 @@ func showShellsList() {
 		// "Path",
 	}
 
+	if err, onShells = doShellSelection(onFilter, true); err != nil {
+		log.Fatal("%s", err)
+	} else if nShells = len(onShells); nShells == 0 {
+		log.Fatal("no shell selected by the filter %s", core.Dim(onFilter))
+	}
+
 	keys := []string{}
-	for k := range Shells {
+	for k := range onShells {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 
 	for _, name := range keys {
-		sh := Shells[name]
+		sh := onShells[name]
 		en := core.Green("✔")
 		if !sh.Enabled {
 			en = core.Red("✖")
