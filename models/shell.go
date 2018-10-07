@@ -104,7 +104,7 @@ func (sh Shell) NewSession(timeouts session.Timeouts) (error, session.Session) {
 	}
 	// check for user provided plugins
 	if plugin := plugins.Get(sh.Type); plugin != nil {
-		return plugins.ForSession(plugin.Clone(), ctx)
+		return plugin.NewSession(ctx)
 	}
 
 	return fmt.Errorf("session type %s for shell %s is not supported", sh.Type, sh.Name), nil

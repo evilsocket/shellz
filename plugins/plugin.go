@@ -5,13 +5,17 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
+	"sync"
 
+	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/session"
 
 	"github.com/robertkrimen/otto"
 )
 
 type Plugin struct {
+	sync.Mutex
+
 	Name string
 	Code string
 	Path string
@@ -42,12 +46,7 @@ func LoadPlugin(path string, doCompile bool) (error, *Plugin) {
 	return nil, plugin
 }
 
-func (p *Plugin) Clone() *Plugin {
-	_, clone := LoadPlugin(p.Path, true)
-	return clone
-}
-
-func (p *Plugin) Create(ctx session.Context) (error, otto.Value) {
+func (p *Plugin) create(ctx session.Context) (error, otto.Value) {
 	if err := p.vm.Set("ctx", ctx); err != nil {
 		return err, otto.UndefinedValue()
 	} else if _, err := p.vm.Run(p.cbCreate); err != nil {
@@ -59,7 +58,7 @@ func (p *Plugin) Create(ctx session.Context) (error, otto.Value) {
 	}
 }
 
-func (p *Plugin) Exec(cmd string) (error, otto.Value) {
+func (p *Plugin) exec(cmd string) (error, otto.Value) {
 	if err := p.vm.Set("cmd", cmd); err != nil {
 		return err, otto.UndefinedValue()
 	} else if _, err := p.vm.Run(p.cbExec); err != nil {
@@ -69,13 +68,6 @@ func (p *Plugin) Exec(cmd string) (error, otto.Value) {
 	} else {
 		return nil, ret
 	}
-}
-
-func (p *Plugin) Close() error {
-	if _, err := p.vm.Run(p.cbClose); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (p *Plugin) compile() error {
@@ -109,4 +101,46 @@ func (p *Plugin) compileCall(script **otto.Script, name string, call string) err
 		return err
 	}
 	return nil
+}
+
+func (p *Plugin) clone() *Plugin {
+	_, clone := LoadPlugin(p.Path, true)
+	return clone
+}
+
+func (p *Plugin) NewSession(ctx session.Context) (err error, clone *Plugin) {
+	p.Lock()
+	defer p.Unlock()
+	clone = p.clone()
+	err, _ = clone.create(ctx)
+	return
+}
+
+func (p *Plugin) Type() string {
+	return "plugin"
+}
+
+func (p *Plugin) Exec(cmd string) ([]byte, error) {
+	p.Lock()
+	defer p.Unlock()
+
+	if err, ret := p.exec(cmd); err != nil {
+		return nil, err
+	} else if ret.IsNull() || ret.IsUndefined() {
+		return []byte{}, nil
+	} else if exported, err := ret.Export(); err != nil {
+		return nil, err
+	} else if array, ok := exported.([]byte); !ok {
+		return nil, fmt.Errorf("error while converting %v to []byte", exported)
+	} else {
+		return array, nil
+	}
+}
+
+func (p *Plugin) Close() {
+	p.Lock()
+	defer p.Unlock()
+	if _, err := p.vm.Run(p.cbClose); err != nil {
+		log.Warning("error while running Close callback for plugin %s: %s", p.Name, err)
+	}
 }
