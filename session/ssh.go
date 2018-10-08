@@ -2,10 +2,14 @@ package session
 
 import (
 	"fmt"
-	"golang.org/x/crypto/ssh"
 	"io/ioutil"
+	"net"
+	"os"
 	"sync"
 	"time"
+
+	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/agent"
 
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
@@ -29,18 +33,31 @@ func ctx2ClientConfig(ctx Context) (error, *ssh.ClientConfig) {
 	}
 
 	if ctx.KeyFile != "" {
-		if ctx.KeyFile, err = core.ExpandPath(ctx.KeyFile); err != nil {
-			return fmt.Errorf("error while expanding path '%s': %s", ctx.KeyFile, err), nil
-		}
-
-		log.Debug("loading ssh key from %s ...", ctx.KeyFile)
-
-		if key, err := ioutil.ReadFile(ctx.KeyFile); err != nil {
-			return fmt.Errorf("error while reading key file %s: %s", ctx.KeyFile, err), nil
-		} else if signer, err := ssh.ParsePrivateKey(key); err != nil {
-			return fmt.Errorf("error while parsing key file %s: %s", ctx.KeyFile, err), nil
+		if ctx.KeyFile == "agent" {
+			if socket := os.Getenv("SSH_AUTH_SOCK"); socket != "" {
+				if conn, err := net.Dial("unix", socket); err == nil {
+					agentClient := agent.NewClient(conn)
+					authMethods = append(authMethods, ssh.PublicKeysCallback(agentClient.Signers))
+				} else {
+					return fmt.Errorf("error while connection to ssh-agent '%s': %s", socket, err), nil
+				}
+			} else {
+				return fmt.Errorf("error while connecting to ssh-agent (cant find SSH_AUTH_SOCK variable)"), nil
+			}
 		} else {
-			authMethods = append(authMethods, ssh.PublicKeys(signer))
+			if ctx.KeyFile, err = core.ExpandPath(ctx.KeyFile); err != nil {
+				return fmt.Errorf("error while expanding path '%s': %s", ctx.KeyFile, err), nil
+			}
+
+			log.Debug("loading ssh key from %s ...", ctx.KeyFile)
+
+			if key, err := ioutil.ReadFile(ctx.KeyFile); err != nil {
+				return fmt.Errorf("error while reading key file %s: %s", ctx.KeyFile, err), nil
+			} else if signer, err := ssh.ParsePrivateKey(key); err != nil {
+				return fmt.Errorf("error while parsing key file %s: %s", ctx.KeyFile, err), nil
+			} else {
+				authMethods = append(authMethods, ssh.PublicKeys(signer))
+			}
 		}
 	}
 
