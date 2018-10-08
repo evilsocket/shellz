@@ -2,13 +2,17 @@ package plugins
 
 import (
 	"bytes"
+	"golang.org/x/net/proxy"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+
+	"github.com/evilsocket/shellz/session"
 )
 
 type httpPackage struct {
+	proxy session.Proxy
 }
 
 var hp = httpPackage{}
@@ -22,6 +26,17 @@ type httpResponse struct {
 	Response *http.Response
 	Raw      []byte
 	Body     string
+}
+
+func (c httpPackage) WithSOCKS5(address string, port int, username string, password string) httpPackage {
+	return httpPackage{
+		proxy: session.Proxy{
+			Address:  address,
+			Port:     port,
+			Username: username,
+			Password: password,
+		},
+	}
 }
 
 func (c httpPackage) Request(method string, uri string, headers map[string]string, form map[string]string) httpResponse {
@@ -47,7 +62,19 @@ func (c httpPackage) Request(method string, uri string, headers map[string]strin
 		req.Header.Add(name, value)
 	}
 
-	client := &http.Client{}
+	transport := &http.Transport{}
+	client := &http.Client{Transport: transport}
+
+	if c.proxy.Address != "" {
+		if dialer, err := proxy.SOCKS5("tcp", c.proxy.String(), nil, proxy.Direct); err != nil {
+			return httpResponse{
+				Error: err,
+			}
+		} else {
+			transport.Dial = dialer.Dial
+		}
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return httpResponse{Error: err}

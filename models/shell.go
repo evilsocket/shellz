@@ -4,11 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net"
 	"os"
-	"strings"
 
-	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/plugins"
 	"github.com/evilsocket/shellz/session"
 )
@@ -29,8 +26,8 @@ type Shell struct {
 	Ciphers      []string `json:"ciphers"`
 	Enabled      bool     `json:"enabled"`
 	Groups       []string `json:"groups"`
+	Proxy        Proxy    `json:"proxy"`
 
-	Address  net.IP    `json:"-"`
 	Identity *Identity `json:"-"`
 	Path     string    `json:"-"`
 }
@@ -43,7 +40,6 @@ func LoadShell(path string, idents Identities) (err error, shell Shell) {
 		Port:         defaultPort,
 		Type:         defaultType,
 		IdentityName: defaultIdentity,
-		Address:      net.IP{0},
 	}
 
 	file, err := os.Open(path)
@@ -78,23 +74,20 @@ func (sh Shell) Save() error {
 }
 
 func (sh Shell) NewSession(timeouts session.Timeouts) (error, session.Session) {
-	if !strings.Contains(sh.Host, "://") && sh.Address[0] == 0 {
-		if addrs, err := net.LookupIP(sh.Host); err != nil {
-			return fmt.Errorf("could not resolve host '%s' for shell '%s'", sh.Host, sh.Name), nil
-		} else {
-			sh.Address = addrs[0]
-			log.Debug("host %s resolved to %s", sh.Host, sh.Address)
-		}
-	}
-
+	// TODO: refactor this shit
 	ctx := session.Context{
 		Host:     sh.Host,
-		Address:  sh.Address,
 		Port:     sh.Port,
 		Username: sh.Identity.Username,
 		Password: sh.Identity.Password,
 		KeyFile:  sh.Identity.KeyFile,
 		Ciphers:  sh.Ciphers,
+		Proxy: session.Proxy{
+			Address:  sh.Proxy.Address,
+			Port:     sh.Proxy.Port,
+			Username: sh.Proxy.Username,
+			Password: sh.Proxy.Password,
+		},
 		Timeouts: timeouts,
 	}
 

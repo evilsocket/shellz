@@ -23,7 +23,7 @@ func NewTelnet(ctx Context) (error, Session) {
 	var err error
 
 	t := &TelnetSession{
-		host:     fmt.Sprintf("%s:%d", ctx.Address.String(), ctx.Port),
+		host:     fmt.Sprintf("%s:%d", ctx.Host, ctx.Port),
 		timeouts: ctx.Timeouts,
 	}
 

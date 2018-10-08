@@ -70,6 +70,23 @@ Shells can (optionally) be grouped (with a default `all` group containing all of
 }
 ```
 
+If you wish to use a SOCKS5 proxy (supported for the `ssh` session and custom shells), for instance to reach a shell on a TOR hidden service, you can use the `"proxy"` configuration object:
+
+```json
+{
+  "name": "my-tor-shell",
+  "host": "whateverwhateveroihfdwoeghfd.onion",
+  "port": 22,
+  "identity": "default",
+  "proxy": {
+    "address": "127.0.0.1",
+    "port": 9050,
+    "username": "this is an optional field",
+    "password": "this is an optional field"
+  }
+}
+```
+
 Also the `telnet` protocol is supported:
 
 ```sh
@@ -152,6 +169,14 @@ function Exec(ctx, cmd) {
 function Close(obj) {
     log.Debug("Close(" + ctx + ")");
 }
+```
+
+To use a SOCKS5 proxy with the `http` object:
+
+```js
+var proxied = http.WithProxy("127.0.0.1", 9050, "optional username", "optional password");
+
+proxied.Get(...);
 ```
 
 Other than the `log` interface and the `http` client, also a `tcp` client is available with the following API:

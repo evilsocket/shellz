@@ -1,7 +1,6 @@
 package session
 
 import (
-	"net"
 	"time"
 )
 
@@ -13,13 +12,13 @@ type Timeouts struct {
 
 type Context struct {
 	Host     string
-	Address  net.IP
 	Port     int
 	Username string
 	Password string
 	KeyFile  string
 	Ciphers  []string
 	Timeouts Timeouts
+	Proxy    Proxy
 }
 
 type Handler func(ctx Context) (error, Session)

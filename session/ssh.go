@@ -2,16 +2,12 @@ package session
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net"
-	"os"
 	"sync"
 	"time"
 
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/agent"
+	"golang.org/x/net/proxy"
 
-	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 )
 
@@ -23,69 +19,11 @@ const (
 type SSHSession struct {
 	sync.Mutex
 	host     string
+	proxy    Proxy
 	config   *ssh.ClientConfig
 	client   *ssh.Client
 	session  *ssh.Session
 	timeouts Timeouts
-}
-
-func authFromAgent() (err error, auth ssh.AuthMethod) {
-	log.Debug("asking for ssh key to %s", SSHAuthSock)
-
-	if socket := os.Getenv(SSHAuthSock); socket == "" {
-		err = fmt.Errorf("error while connecting to ssh-agent (cant find %s variable)", SSHAuthSock)
-	} else if conn, err := net.Dial("unix", socket); err != nil {
-		err = fmt.Errorf("error while connecting to ssh-agent '%s': %s", socket, err)
-	} else {
-		auth = ssh.PublicKeysCallback(agent.NewClient(conn).Signers)
-	}
-	return
-}
-
-func authFromFile(ctx Context) (err error, auth ssh.AuthMethod) {
-	log.Debug("loading ssh key from %s ...", ctx.KeyFile)
-
-	if ctx.KeyFile, err = core.ExpandPath(ctx.KeyFile); err != nil {
-		err = fmt.Errorf("error while expanding path '%s': %s", ctx.KeyFile, err)
-	} else if key, err := ioutil.ReadFile(ctx.KeyFile); err != nil {
-		err = fmt.Errorf("error while reading key file %s: %s", ctx.KeyFile, err)
-	} else if signer, err := ssh.ParsePrivateKey(key); err != nil {
-		err = fmt.Errorf("error while parsing key file %s: %s", ctx.KeyFile, err)
-	} else {
-		auth = ssh.PublicKeys(signer)
-	}
-	return
-}
-
-func ctx2ClientConfig(ctx Context) (error, *ssh.ClientConfig) {
-	authMethods := []ssh.AuthMethod{}
-	if ctx.Password != "" {
-		authMethods = append(authMethods, ssh.Password(ctx.Password))
-	}
-
-	if ctx.KeyFile == SSHAgentKey {
-		if err, auth := authFromAgent(); err != nil {
-			return err, nil
-		} else {
-			authMethods = append(authMethods, auth)
-		}
-	} else if ctx.KeyFile != "" {
-		if err, auth := authFromFile(ctx); err != nil {
-			return err, nil
-		} else {
-			authMethods = append(authMethods, auth)
-		}
-	}
-
-	return nil, &ssh.ClientConfig{
-		Config: ssh.Config{
-			Ciphers: ctx.Ciphers,
-		},
-		User:            ctx.Username,
-		Auth:            authMethods,
-		Timeout:         ctx.Timeouts.Connect,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-	}
 }
 
 func NewSSH(ctx Context) (error, Session) {
@@ -95,14 +33,33 @@ func NewSSH(ctx Context) (error, Session) {
 	}
 
 	sshs := &SSHSession{
-		host:     fmt.Sprintf("%s:%d", ctx.Address.String(), ctx.Port),
+		host:     fmt.Sprintf("%s:%d", ctx.Host, ctx.Port),
 		config:   cfg,
+		proxy:    ctx.Proxy,
 		timeouts: ctx.Timeouts,
 	}
 
-	if sshs.client, err = ssh.Dial("tcp", sshs.host, sshs.config); err != nil {
-		return err, nil
-	} else if sshs.session, err = sshs.client.NewSession(); err != nil {
+	if sshs.proxy.Address == "" {
+		log.Debug("dialing ssh %s ...", sshs.host)
+		if sshs.client, err = ssh.Dial("tcp", sshs.host, sshs.config); err != nil {
+			return err, nil
+		}
+	} else {
+		log.Debug("dialing ssh %s via socks5://%s ...", sshs.host, sshs.proxy.String())
+
+		if dialer, err := proxy.SOCKS5("tcp", sshs.proxy.String(), nil, proxy.Direct); err != nil {
+			return err, nil
+		} else if conn, err := dialer.Dial("tcp", sshs.host); err != nil {
+			return err, nil
+		} else if c, chans, reqs, err := ssh.NewClientConn(conn, sshs.host, sshs.config); err != nil {
+			conn.Close()
+			return err, nil
+		} else {
+			sshs.client = ssh.NewClient(c, chans, reqs)
+		}
+	}
+
+	if sshs.session, err = sshs.client.NewSession(); err != nil {
 		sshs.client.Close()
 		return err, nil
 	}
