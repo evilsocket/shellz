@@ -43,7 +43,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:b166c998eb589cd6da3aa24901f328e2d14cfe17cda0957129f880723ee9384b"
+  digest = "1:5bfe7889c6059903d067d47a0a66f07a0851f47fd38f0ba5c77f402fb3d46a2d"
   name = "golang.org/x/crypto"
   packages = [
     "curve25519",
@@ -53,6 +53,7 @@
     "internal/subtle",
     "poly1305",
     "ssh",
+    "ssh/agent",
   ]
   pruneopts = "UT"
   revision = "5295e8364332db77d75fce11f1d19c053919a9c9"
@@ -76,6 +77,7 @@
     "github.com/reiver/go-telnet",
     "github.com/robertkrimen/otto",
     "golang.org/x/crypto/ssh",
+    "golang.org/x/crypto/ssh/agent",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

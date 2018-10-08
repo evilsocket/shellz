@@ -34,7 +34,15 @@ The tool will use the `~/.shellz` folder to load your identities and shells json
 }
 ```
 
-As you can see my `default` identity is using my SSH private key to log in the `evilsocket` user, alternatively you can specify a `"password"` field instead of a `"key"`.
+As you can see my `default` identity is using my SSH private key to log in the `evilsocket` user, alternatively you can specify a `"password"` field instead of a `"key"`. Alternatively, you can set the `"key"` field to `"@agent"`, in which case shellz will ask the ssh-agent for authentication details to the remote host:
+
+```json
+{
+    "name": "default",
+    "username": "evilsocket",
+    "key": "@agent"
+}
+```
 
 Now let's create our first shell json file ( `~/.shellz/shells/media.json` ) that will use the `default` identity we just created to connect to our home media server (called `media.server` in our example):
 
