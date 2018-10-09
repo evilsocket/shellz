@@ -26,6 +26,11 @@ func WithTimeout(tm time.Duration, cb func() interface{}) (error, interface{}) {
 	case <-timeout:
 		return TimeoutError, nil
 	case res := <-done:
+		if res != nil {
+			if e, ok := res.(error); ok {
+				return e, nil
+			}
+		}
 		return nil, res
 	}
 }

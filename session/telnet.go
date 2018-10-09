@@ -29,16 +29,12 @@ func NewTelnet(sh models.Shell, timeouts core.Timeouts) (error, Session) {
 		timeouts: timeouts,
 	}
 
-	err, obj := core.WithTimeout(timeouts.Connect, func() interface{} {
+	err, _ = core.WithTimeout(timeouts.Connect, func() interface{} {
 		t.client, err = telnet.DialTo(t.host)
 		return err
 	})
 	if err != nil {
 		return err, nil
-	} else if obj != nil {
-		if err = obj.(error); err != nil {
-			return err, nil
-		}
 	}
 
 	if sh.Identity.Username != "" && sh.Identity.Password != "" {

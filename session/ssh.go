@@ -41,7 +41,7 @@ func NewSSH(sh models.Shell, timeouts core.Timeouts) (error, Session) {
 		timeouts: timeouts,
 	}
 
-	err, obj := core.WithTimeout(sshs.timeouts.Connect, func() interface{} {
+	err, _ = core.WithTimeout(sshs.timeouts.Connect, func() interface{} {
 		if sshs.proxy.Empty() {
 			log.Debug("dialing ssh %s ...", sshs.host)
 			if sshs.client, err = ssh.Dial("tcp", sshs.host, sshs.config); err != nil {
@@ -63,15 +63,10 @@ func NewSSH(sh models.Shell, timeouts core.Timeouts) (error, Session) {
 		}
 		return nil
 	})
+
 	if err != nil {
 		return err, nil
-	} else if obj != nil {
-		if err = obj.(error); err != nil {
-			return err, nil
-		}
-	}
-
-	if sshs.session, err = sshs.client.NewSession(); err != nil {
+	} else if sshs.session, err = sshs.client.NewSession(); err != nil {
 		sshs.client.Close()
 		return err, nil
 	}

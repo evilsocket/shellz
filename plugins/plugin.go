@@ -114,16 +114,12 @@ func (p *Plugin) NewSession(sh models.Shell, timeouts core.Timeouts) (err error,
 	defer p.Unlock()
 	clone = p.clone()
 	clone.timeouts = timeouts
-	err, obj := core.WithTimeout(timeouts.Connect, func() interface{} {
+	err, _ = core.WithTimeout(timeouts.Connect, func() interface{} {
 		err, clone.ctx = clone.call("Create", sh)
 		return err
 	})
 	if err != nil {
 		return err, nil
-	} else if obj != nil {
-		if err = obj.(error); err != nil {
-			return err, nil
-		}
 	}
 	return
 }
