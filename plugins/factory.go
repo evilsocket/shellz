@@ -5,6 +5,7 @@ import (
 
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/shellz/models"
 )
 
 type Plugins map[string]*Plugin
@@ -27,8 +28,8 @@ func Load(path string) error {
 	})
 }
 
-func Get(name string) *Plugin {
-	return plugins[name]
+func Get(sh models.Shell) *Plugin {
+	return plugins[sh.Type]
 }
 
 func Number() int {

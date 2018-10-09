@@ -118,15 +118,15 @@ func trackOutput(out []byte) {
 	}
 }
 
-func sessionFor(sh models.Shell) (err error, sess session.Session) {
-	if err, sess = session.For(sh, timeouts); err == nil {
-		if sess == nil {
-			if plugin := plugins.Get(sh.Type); plugin != nil {
-				err, sess = plugin.NewSession(sh, timeouts)
-			}
+func findSessionFor(sh models.Shell) (err error, sess session.Session) {
+	// first try one of the default handlers
+	if err, sess = session.For(sh, timeouts); sess == nil && err == nil {
+		// try one of the user plugins
+		if plugin := plugins.Get(sh); plugin != nil {
+			err, sess = plugin.NewSession(sh, timeouts)
 		}
 	}
-
+	// no error but no session found?
 	if err == nil && sess == nil {
 		err = fmt.Errorf("session type %s for shell %s is not supported", sh.Type, sh.Name)
 	}
@@ -137,7 +137,7 @@ func cmdWorker(job queue.Job) {
 	shell := job.(models.Shell)
 	start := time.Now()
 
-	err, session := sessionFor(shell)
+	err, session := findSessionFor(shell)
 	if err != nil {
 		trackFailure(true)
 		if doTest {
