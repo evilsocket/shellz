@@ -21,11 +21,9 @@ type Plugin struct {
 	Code string
 	Path string
 
-	vm       *otto.Otto
-	cbCreate otto.Value
-	cbExec   otto.Value
-	cbClose  otto.Value
-	ctx      otto.Value
+	vm        *otto.Otto
+	callbacks map[string]otto.Value
+	ctx       interface{}
 }
 
 func LoadPlugin(path string, doCompile bool) (error, *Plugin) {
@@ -35,9 +33,10 @@ func LoadPlugin(path string, doCompile bool) (error, *Plugin) {
 	}
 
 	plugin := &Plugin{
-		Name: strings.Replace(filepath.Base(path), ".js", "", -1),
-		Code: string(raw),
-		Path: path,
+		Name:      strings.Replace(filepath.Base(path), ".js", "", -1),
+		Code:      string(raw),
+		Path:      path,
+		callbacks: make(map[string]otto.Value),
 	}
 
 	if doCompile {
@@ -67,11 +66,11 @@ func (p *Plugin) compile() (err error) {
 	// and validate the syntax, then get the callbacks
 	if _, err = p.vm.Run(p.Code); err != nil {
 		return
-	} else if p.cbCreate, err = p.findCall("Create"); err != nil {
+	} else if p.callbacks["Create"], err = p.findCall("Create"); err != nil {
 		return fmt.Errorf("error while compiling Create callback for %s: %s", p.Path, err)
-	} else if p.cbExec, err = p.findCall("Exec"); err != nil {
+	} else if p.callbacks["Exec"], err = p.findCall("Exec"); err != nil {
 		return fmt.Errorf("error while compiling Exec callback for %s: %s", p.Path, err)
-	} else if p.cbClose, err = p.findCall("Close"); err != nil {
+	} else if p.callbacks["Close"], err = p.findCall("Close"); err != nil {
 		return fmt.Errorf("error while compiling Close callback for %s: %s", p.Path, err)
 	}
 	return nil
@@ -82,11 +81,26 @@ func (p *Plugin) clone() *Plugin {
 	return clone
 }
 
+func (p *Plugin) call(name string, args ...interface{}) (error, interface{}) {
+	if cb, found := p.callbacks[name]; !found {
+		return fmt.Errorf("%s does not name a function", name), nil
+	} else if ret, err := cb.Call(otto.NullValue(), args...); err != nil {
+		return err, nil
+	} else if !ret.IsUndefined() {
+		if exported, err := ret.Export(); err != nil {
+			return err, nil
+		} else {
+			return nil, exported
+		}
+	}
+	return nil, nil
+}
+
 func (p *Plugin) NewSession(sh models.Shell, timeouts core.Timeouts) (err error, clone *Plugin) {
 	p.Lock()
 	defer p.Unlock()
 	clone = p.clone()
-	clone.ctx, err = clone.cbCreate.Call(otto.NullValue(), sh)
+	err, clone.ctx = clone.call("Create", sh)
 	return
 }
 
@@ -98,14 +112,12 @@ func (p *Plugin) Exec(cmd string) ([]byte, error) {
 	p.Lock()
 	defer p.Unlock()
 
-	if ret, err := p.cbExec.Call(otto.NullValue(), p.ctx, cmd); err != nil {
+	if err, ret := p.call("Exec", p.ctx, cmd); err != nil {
 		return nil, err
-	} else if ret.IsNull() || ret.IsUndefined() {
-		return []byte{}, nil
-	} else if exported, err := ret.Export(); err != nil {
-		return nil, err
-	} else if array, ok := exported.([]byte); !ok {
-		return nil, fmt.Errorf("error while converting %v to []byte", exported)
+	} else if ret == nil {
+		return nil, fmt.Errorf("return value of Exec is null")
+	} else if array, ok := ret.([]byte); !ok {
+		return nil, fmt.Errorf("error while converting %v to []byte", ret)
 	} else {
 		return array, nil
 	}
@@ -114,7 +126,7 @@ func (p *Plugin) Exec(cmd string) ([]byte, error) {
 func (p *Plugin) Close() {
 	p.Lock()
 	defer p.Unlock()
-	if _, err := p.cbClose.Call(otto.NullValue(), p.ctx); err != nil {
+	if err, _ := p.call("Close", p.ctx); err != nil {
 		log.Warning("error while running Close callback for plugin %s: %s", p.Name, err)
 	}
 }
