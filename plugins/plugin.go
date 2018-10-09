@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"unicode"
 
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
@@ -23,6 +24,7 @@ type Plugin struct {
 
 	vm        *otto.Otto
 	callbacks map[string]otto.Value
+	objects   map[string]otto.Value
 	ctx       interface{}
 }
 
@@ -37,6 +39,7 @@ func LoadPlugin(path string, doCompile bool) (error, *Plugin) {
 		Code:      string(raw),
 		Path:      path,
 		callbacks: make(map[string]otto.Value),
+		objects:   make(map[string]otto.Value),
 	}
 
 	if doCompile {
@@ -47,32 +50,41 @@ func LoadPlugin(path string, doCompile bool) (error, *Plugin) {
 	return nil, plugin
 }
 
-func (p *Plugin) findCall(name string) (cb otto.Value, err error) {
-	if cb, err = p.vm.Get(name); err != nil {
-		return
-	} else if !cb.IsFunction() {
-		err = fmt.Errorf("%s is not a function", name)
-	}
-	return
-}
-
 func (p *Plugin) compile() (err error) {
 	p.vm = otto.New()
+
 	// define built in functions and objects
 	if err = p.doDefines(); err != nil {
 		return
 	}
+
+	// track objects already defined by Otto
+	predefined := map[string]bool{}
+	for name := range p.vm.Context().Symbols {
+		predefined[name] = true
+	}
+
 	// run the code once in order to define all the functions
 	// and validate the syntax, then get the callbacks
 	if _, err = p.vm.Run(p.Code); err != nil {
 		return
-	} else if p.callbacks["Create"], err = p.findCall("Create"); err != nil {
-		return fmt.Errorf("error while compiling Create callback for %s: %s", p.Path, err)
-	} else if p.callbacks["Exec"], err = p.findCall("Exec"); err != nil {
-		return fmt.Errorf("error while compiling Exec callback for %s: %s", p.Path, err)
-	} else if p.callbacks["Close"], err = p.findCall("Close"); err != nil {
-		return fmt.Errorf("error while compiling Close callback for %s: %s", p.Path, err)
 	}
+
+	// every uppercase object is considered exported
+	for name, sym := range p.vm.Context().Symbols {
+		// ignore predefined objects
+		if _, found := predefined[name]; !found {
+			// ignore lowercase global objects
+			if unicode.IsUpper(rune(name[0])) {
+				if sym.IsFunction() {
+					p.callbacks[name] = sym
+				} else {
+					p.objects[name] = sym
+				}
+			}
+		}
+	}
+
 	return nil
 }
 
