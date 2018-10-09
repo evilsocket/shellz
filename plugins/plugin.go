@@ -13,6 +13,8 @@ import (
 	"github.com/evilsocket/shellz/models"
 
 	"github.com/robertkrimen/otto"
+
+	"github.com/evilsocket/islazy/async"
 )
 
 type Plugin struct {
@@ -114,7 +116,7 @@ func (p *Plugin) NewSession(sh models.Shell, timeouts core.Timeouts) (err error,
 	defer p.Unlock()
 	clone = p.clone()
 	clone.timeouts = timeouts
-	err, _ = core.WithTimeout(timeouts.Connect, func() interface{} {
+	err, _ = async.WithTimeout(timeouts.Connect, func() interface{} {
 		err, clone.ctx = clone.call("Create", sh)
 		return err
 	})
@@ -137,7 +139,7 @@ func (p *Plugin) Exec(cmd string) ([]byte, error) {
 	p.Lock()
 	defer p.Unlock()
 
-	err, obj := core.WithTimeout(p.timeouts.Read+p.timeouts.Write, func() interface{} {
+	err, obj := async.WithTimeout(p.timeouts.Read+p.timeouts.Write, func() interface{} {
 		if err, ret := p.call("Exec", p.ctx, cmd); err != nil {
 			return eres{err: err}
 		} else if ret == nil {

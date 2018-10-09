@@ -11,6 +11,7 @@ import (
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
 
+	"github.com/evilsocket/islazy/async"
 	"github.com/evilsocket/islazy/str"
 	"github.com/reiver/go-telnet"
 )
@@ -30,7 +31,7 @@ func NewTelnet(sh models.Shell, timeouts core.Timeouts) (error, Session) {
 		timeouts: timeouts,
 	}
 
-	err, _ = core.WithTimeout(timeouts.Connect, func() interface{} {
+	err, _ = async.WithTimeout(timeouts.Connect, func() interface{} {
 		t.client, err = telnet.DialTo(t.host)
 		return err
 	})
@@ -63,7 +64,7 @@ type rw struct {
 }
 
 func (t *TelnetSession) doRead(buf []byte) (int, error) {
-	err, obj := core.WithTimeout(t.timeouts.Read, func() interface{} {
+	err, obj := async.WithTimeout(t.timeouts.Read, func() interface{} {
 		n, err := t.client.Read(buf)
 		return rw{e: err, n: n}
 	})
@@ -76,7 +77,7 @@ func (t *TelnetSession) doRead(buf []byte) (int, error) {
 }
 
 func (t *TelnetSession) doWrite(buf []byte) (int, error) {
-	err, obj := core.WithTimeout(t.timeouts.Write, func() interface{} {
+	err, obj := async.WithTimeout(t.timeouts.Write, func() interface{} {
 		n, err := t.client.Write(buf)
 		return rw{e: err, n: n}
 	})

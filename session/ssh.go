@@ -11,6 +11,8 @@ import (
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
+
+	"github.com/evilsocket/islazy/async"
 )
 
 const (
@@ -41,7 +43,7 @@ func NewSSH(sh models.Shell, timeouts core.Timeouts) (error, Session) {
 		timeouts: timeouts,
 	}
 
-	err, _ = core.WithTimeout(sshs.timeouts.Connect, func() interface{} {
+	err, _ = async.WithTimeout(sshs.timeouts.Connect, func() interface{} {
 		if sshs.proxy.Empty() {
 			log.Debug("dialing ssh %s ...", sshs.host)
 			if sshs.client, err = ssh.Dial("tcp", sshs.host, sshs.config); err != nil {
@@ -87,7 +89,7 @@ func (s *SSHSession) Exec(cmd string) ([]byte, error) {
 	s.Lock()
 	defer s.Unlock()
 
-	err, obj := core.WithTimeout(s.timeouts.Write+s.timeouts.Read, func() interface{} {
+	err, obj := async.WithTimeout(s.timeouts.Write+s.timeouts.Read, func() interface{} {
 		out, err := s.session.CombinedOutput(cmd)
 		return cmdResult{out: out, err: err}
 	})
