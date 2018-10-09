@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
@@ -30,18 +29,14 @@ func NewTelnet(sh models.Shell, timeouts core.Timeouts) (error, Session) {
 		timeouts: timeouts,
 	}
 
-	done := make(chan error)
-	timeout := time.After(timeouts.Connect)
-	go func() {
+	err, obj := core.WithTimeout(timeouts.Connect, func() interface{} {
 		t.client, err = telnet.DialTo(t.host)
-		done <- err
-	}()
-
-	select {
-	case <-timeout:
-		return fmt.Errorf("timeout while dialing %s", t.host), nil
-	case err := <-done:
-		if err != nil {
+		return err
+	})
+	if err != nil {
+		return err, nil
+	} else if obj != nil {
+		if err = obj.(error); err != nil {
 			return err, nil
 		}
 	}
@@ -71,44 +66,28 @@ type rw struct {
 }
 
 func (t *TelnetSession) doRead(buf []byte) (int, error) {
-	r := rw{}
-	done := make(chan rw)
-	timeout := time.After(t.timeouts.Read)
-	go func() {
+	err, obj := core.WithTimeout(t.timeouts.Read, func() interface{} {
 		n, err := t.client.Read(buf)
-		done <- rw{e: err, n: n}
-	}()
-
-	select {
-	case <-timeout:
-		return 0, fmt.Errorf("timeout while reading from %s", t.host)
-	case r = <-done:
-		if r.e != nil {
-			return 0, r.e
-		}
+		return rw{e: err, n: n}
+	})
+	if err != nil {
+		return -1, err
 	}
 
+	r := obj.(rw)
 	return r.n, r.e
 }
 
 func (t *TelnetSession) doWrite(buf []byte) (int, error) {
-	w := rw{}
-	done := make(chan rw)
-	timeout := time.After(t.timeouts.Write)
-	go func() {
+	err, obj := core.WithTimeout(t.timeouts.Write, func() interface{} {
 		n, err := t.client.Write(buf)
-		done <- rw{e: err, n: n}
-	}()
-
-	select {
-	case <-timeout:
-		return 0, fmt.Errorf("timeout while writing to %s", t.host)
-	case w = <-done:
-		if w.e != nil {
-			return 0, w.e
-		}
+		return rw{e: err, n: n}
+	})
+	if err != nil {
+		return -1, err
 	}
 
+	w := obj.(rw)
 	return w.n, w.e
 }
 

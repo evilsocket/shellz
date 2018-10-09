@@ -22,6 +22,7 @@ type Plugin struct {
 	Code string
 	Path string
 
+	timeouts  core.Timeouts
 	vm        *otto.Otto
 	callbacks map[string]otto.Value
 	objects   map[string]otto.Value
@@ -112,7 +113,18 @@ func (p *Plugin) NewSession(sh models.Shell, timeouts core.Timeouts) (err error,
 	p.Lock()
 	defer p.Unlock()
 	clone = p.clone()
-	err, clone.ctx = clone.call("Create", sh)
+	clone.timeouts = timeouts
+	err, obj := core.WithTimeout(timeouts.Connect, func() interface{} {
+		err, clone.ctx = clone.call("Create", sh)
+		return err
+	})
+	if err != nil {
+		return err, nil
+	} else if obj != nil {
+		if err = obj.(error); err != nil {
+			return err, nil
+		}
+	}
 	return
 }
 
@@ -120,19 +132,31 @@ func (p *Plugin) Type() string {
 	return "plugin"
 }
 
+type eres struct {
+	err   error
+	array []byte
+}
+
 func (p *Plugin) Exec(cmd string) ([]byte, error) {
 	p.Lock()
 	defer p.Unlock()
 
-	if err, ret := p.call("Exec", p.ctx, cmd); err != nil {
+	err, obj := core.WithTimeout(p.timeouts.Read+p.timeouts.Write, func() interface{} {
+		if err, ret := p.call("Exec", p.ctx, cmd); err != nil {
+			return eres{err: err}
+		} else if ret == nil {
+			return eres{err: fmt.Errorf("return value of Exec is null")}
+		} else if array, ok := ret.([]byte); !ok {
+			return eres{err: fmt.Errorf("error while converting %v to []byte", ret)}
+		} else {
+			return eres{array: array}
+		}
+	})
+	if err != nil {
 		return nil, err
-	} else if ret == nil {
-		return nil, fmt.Errorf("return value of Exec is null")
-	} else if array, ok := ret.([]byte); !ok {
-		return nil, fmt.Errorf("error while converting %v to []byte", ret)
-	} else {
-		return array, nil
 	}
+	er := obj.(eres)
+	return er.array, er.err
 }
 
 func (p *Plugin) Close() {
