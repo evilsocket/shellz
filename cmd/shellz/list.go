@@ -9,6 +9,8 @@ import (
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/plugins"
+
+	"github.com/evilsocket/islazy/tui"
 )
 
 func showIdentsList() {
@@ -48,7 +50,7 @@ func showIdentsList() {
 	}
 
 	fmt.Printf("\n%s\n", core.Bold("identities"))
-	core.AsTable(os.Stdout, cols, rows)
+	tui.Table(os.Stdout, cols, rows)
 }
 
 func showPluginsList() {
@@ -67,7 +69,7 @@ func showPluginsList() {
 		})
 
 		fmt.Printf("\n%s\n", core.Bold("plugins"))
-		core.AsTable(os.Stdout, cols, rows)
+		tui.Table(os.Stdout, cols, rows)
 	}
 }
 
@@ -123,7 +125,7 @@ func showShellsList() {
 	}
 
 	fmt.Printf("\n%s\n", core.Bold("shells"))
-	core.AsTable(os.Stdout, cols, rows)
+	tui.Table(os.Stdout, cols, rows)
 }
 
 func showList() {

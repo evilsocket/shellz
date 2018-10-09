@@ -11,11 +11,12 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:1a893eabcbf5334b18303f65bc1800d592afe10ef60437cb31018dace76a891a"
+  digest = "1:33f289afd1adfd5c6704dc0cd0ea6818af3b45c526651eb9095216a385740d30"
   name = "github.com/evilsocket/islazy"
   packages = [
     "async",
     "str",
+    "tui",
   ]
   pruneopts = "UT"
   revision = "309f42695e09236e26a803a5951750043b615918"
@@ -98,6 +99,7 @@
     "github.com/dustin/go-humanize",
     "github.com/evilsocket/islazy/async",
     "github.com/evilsocket/islazy/str",
+    "github.com/evilsocket/islazy/tui",
     "github.com/reiver/go-telnet",
     "github.com/robertkrimen/otto",
     "golang.org/x/crypto/ssh",
