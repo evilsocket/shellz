@@ -5,8 +5,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
+
+	"github.com/evilsocket/islazy/fs"
 )
 
 var (
@@ -24,14 +25,14 @@ func Init() (err error) {
 	}
 
 	for name, path := range Paths {
-		if Paths[name], err = core.ExpandPath(path); err != nil {
+		if Paths[name], err = fs.Expand(path); err != nil {
 			return fmt.Errorf("error while expanding path '%s': %s", path, err)
 		} else {
 			path = Paths[name]
 		}
 
 		log.Debug("models.Paths[%s] = %s", name, path)
-		if !core.Exists(path) {
+		if !fs.Exists(path) {
 			log.Info("creating folder %s ...", path)
 			if err = os.MkdirAll(path, os.ModePerm); err != nil {
 				return fmt.Errorf("error while creating path '%s': %s", path, err)

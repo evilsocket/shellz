@@ -3,9 +3,10 @@ package plugins
 import (
 	"fmt"
 
-	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
+
+	"github.com/evilsocket/islazy/fs"
 )
 
 type Plugins map[string]*Plugin
@@ -16,7 +17,7 @@ var (
 
 func Load(path string) error {
 	log.Debug("loading plugins from %s ...", path)
-	return core.Glob(path, "*.js", func(fileName string) error {
+	return fs.Glob(path, "*.js", func(fileName string) error {
 		if err, plugin := LoadPlugin(fileName, true); err != nil {
 			return fmt.Errorf("error while loading plugin '%s': %s", fileName, err)
 		} else if taken, found := plugins[plugin.Name]; found {

@@ -3,8 +3,9 @@ package models
 import (
 	"fmt"
 
-	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
+
+	"github.com/evilsocket/islazy/fs"
 )
 
 type Identities map[string]Identity
@@ -17,7 +18,7 @@ func Load() (error, Identities, Shells, Groups) {
 	groups := make(Groups)
 
 	log.Debug("loading identities from %s ...", Paths["idents"])
-	err := core.Glob(Paths["idents"], "*.json", func(fileName string) error {
+	err := fs.Glob(Paths["idents"], "*.json", func(fileName string) error {
 		if err, ident := LoadIdent(fileName); err != nil {
 			return fmt.Errorf("error while loading identity '%s': %s", fileName, err)
 		} else if taken, found := idents[ident.Name]; found {
@@ -32,7 +33,7 @@ func Load() (error, Identities, Shells, Groups) {
 	}
 
 	log.Debug("loading shells from %s ...", Paths["shells"])
-	err = core.Glob(Paths["shells"], "*.json", func(fileName string) error {
+	err = fs.Glob(Paths["shells"], "*.json", func(fileName string) error {
 		if err, shell := LoadShell(fileName, idents); err != nil {
 			return fmt.Errorf("error while loading shell '%s': %s", fileName, err)
 		} else if taken, found := shells[shell.Name]; found {

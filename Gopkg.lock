@@ -11,15 +11,16 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:e3578255ec08acc9206883a849a7130a347f3cb4c7bd8a28f00be7290f881f8b"
+  digest = "1:613e77164ce77d15ad17dacfa1e800b38165035488364c5a3c63898802fe73a7"
   name = "github.com/evilsocket/islazy"
   packages = [
     "async",
+    "fs",
     "str",
     "tui",
   ]
   pruneopts = "UT"
-  revision = "29e57c98e934a7fd0f47d22d1785d6e062143f98"
+  revision = "defc749ed40e18a3b2742e1d66185fe07e4d7a06"
 
 [[projects]]
   branch = "master"
@@ -98,6 +99,7 @@
   input-imports = [
     "github.com/dustin/go-humanize",
     "github.com/evilsocket/islazy/async",
+    "github.com/evilsocket/islazy/fs",
     "github.com/evilsocket/islazy/str",
     "github.com/evilsocket/islazy/tui",
     "github.com/reiver/go-telnet",

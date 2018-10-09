@@ -12,6 +12,8 @@ import (
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
+
+	"github.com/evilsocket/islazy/fs"
 )
 
 func authFromAgent() (err error, auth ssh.AuthMethod) {
@@ -30,7 +32,7 @@ func authFromAgent() (err error, auth ssh.AuthMethod) {
 func authFromFile(sh models.Shell) (err error, auth ssh.AuthMethod) {
 	log.Debug("loading ssh key from %s ...", sh.Identity.KeyFile)
 
-	if sh.Identity.KeyFile, err = core.ExpandPath(sh.Identity.KeyFile); err != nil {
+	if sh.Identity.KeyFile, err = fs.Expand(sh.Identity.KeyFile); err != nil {
 		err = fmt.Errorf("error while expanding path '%s': %s", sh.Identity.KeyFile, err)
 	} else if key, err := ioutil.ReadFile(sh.Identity.KeyFile); err != nil {
 		err = fmt.Errorf("error while reading key file %s: %s", sh.Identity.KeyFile, err)
