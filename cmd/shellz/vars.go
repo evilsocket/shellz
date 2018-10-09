@@ -3,8 +3,8 @@ package main
 import (
 	"time"
 
+	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/models"
-	"github.com/evilsocket/shellz/session"
 )
 
 var (
@@ -26,7 +26,7 @@ var (
 	noBanner  = false
 	err       = error(nil)
 
-	timeouts = session.Timeouts{
+	timeouts = core.Timeouts{
 		Connect: 5 * time.Second,
 		Read:    500 * time.Millisecond,
 		Write:   500 * time.Millisecond,

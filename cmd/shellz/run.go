@@ -12,7 +12,9 @@ import (
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
+	"github.com/evilsocket/shellz/plugins"
 	"github.com/evilsocket/shellz/queue"
+	"github.com/evilsocket/shellz/session"
 
 	"github.com/dustin/go-humanize"
 )
@@ -116,11 +118,26 @@ func trackOutput(out []byte) {
 	}
 }
 
-func cmdWorker(job queue.Job) {
-	start := time.Now()
-	shell := job.(models.Shell)
+func sessionFor(sh models.Shell) (err error, sess session.Session) {
+	if err, sess = session.For(sh, timeouts); err == nil {
+		if sess == nil {
+			if plugin := plugins.Get(sh.Type); plugin != nil {
+				err, sess = plugin.NewSession(sh, timeouts)
+			}
+		}
+	}
 
-	err, session := shell.NewSession(timeouts)
+	if err == nil && sess == nil {
+		err = fmt.Errorf("session type %s for shell %s is not supported", sh.Type, sh.Name)
+	}
+	return
+}
+
+func cmdWorker(job queue.Job) {
+	shell := job.(models.Shell)
+	start := time.Now()
+
+	err, session := sessionFor(shell)
 	if err != nil {
 		trackFailure(true)
 		if doTest {

@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-
-	"github.com/evilsocket/shellz/plugins"
-	"github.com/evilsocket/shellz/session"
 )
 
 const (
@@ -71,34 +68,4 @@ func (sh Shell) Save() error {
 		return err
 	}
 	return nil
-}
-
-func (sh Shell) NewSession(timeouts session.Timeouts) (error, session.Session) {
-	// TODO: refactor this shit
-	ctx := session.Context{
-		Host:     sh.Host,
-		Port:     sh.Port,
-		Username: sh.Identity.Username,
-		Password: sh.Identity.Password,
-		KeyFile:  sh.Identity.KeyFile,
-		Ciphers:  sh.Ciphers,
-		Proxy: session.Proxy{
-			Address:  sh.Proxy.Address,
-			Port:     sh.Proxy.Port,
-			Username: sh.Proxy.Username,
-			Password: sh.Proxy.Password,
-		},
-		Timeouts: timeouts,
-	}
-
-	// check the built in session managers
-	if mgr := session.Get(sh.Type); mgr != nil {
-		return mgr(ctx)
-	}
-	// check for user provided plugins
-	if plugin := plugins.Get(sh.Type); plugin != nil {
-		return plugin.NewSession(ctx)
-	}
-
-	return fmt.Errorf("session type %s for shell %s is not supported", sh.Type, sh.Name), nil
 }

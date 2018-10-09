@@ -1,30 +1,28 @@
 package session
 
 import (
-	"time"
+	"github.com/evilsocket/shellz/core"
+	"github.com/evilsocket/shellz/models"
 )
 
-type Timeouts struct {
-	Connect time.Duration
-	Read    time.Duration
-	Write   time.Duration
-}
+var (
+	managers = map[string]Handler{
+		"ssh":    NewSSH,
+		"telnet": NewTelnet,
+	}
+)
 
-type Context struct {
-	Host     string
-	Port     int
-	Username string
-	Password string
-	KeyFile  string
-	Ciphers  []string
-	Timeouts Timeouts
-	Proxy    Proxy
-}
-
-type Handler func(ctx Context) (error, Session)
+type Handler func(sh models.Shell, timeouts core.Timeouts) (error, Session)
 
 type Session interface {
 	Type() string
 	Exec(cmd string) ([]byte, error)
 	Close()
+}
+
+func For(sh models.Shell, timeouts core.Timeouts) (error, Session) {
+	if mgr := managers[sh.Type]; mgr != nil {
+		return mgr(sh, timeouts)
+	}
+	return nil, nil
 }

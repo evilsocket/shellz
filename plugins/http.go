@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/evilsocket/shellz/session"
+	"github.com/evilsocket/shellz/models"
 )
 
 type httpPackage struct {
-	proxy session.Proxy
+	proxy models.Proxy
 }
 
 var hp = httpPackage{}
@@ -30,7 +30,7 @@ type httpResponse struct {
 
 func (c httpPackage) WithSOCKS5(address string, port int, username string, password string) httpPackage {
 	return httpPackage{
-		proxy: session.Proxy{
+		proxy: models.Proxy{
 			Address:  address,
 			Port:     port,
 			Username: username,

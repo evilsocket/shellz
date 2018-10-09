@@ -7,8 +7,9 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
-	"github.com/evilsocket/shellz/session"
+	"github.com/evilsocket/shellz/models"
 
 	"github.com/robertkrimen/otto"
 )
@@ -46,8 +47,8 @@ func LoadPlugin(path string, doCompile bool) (error, *Plugin) {
 	return nil, plugin
 }
 
-func (p *Plugin) create(ctx session.Context) (error, otto.Value) {
-	if err := p.vm.Set("ctx", ctx); err != nil {
+func (p *Plugin) create(sh models.Shell, timeouts core.Timeouts) (error, otto.Value) {
+	if err := p.vm.Set("sh", sh); err != nil {
 		return err, otto.UndefinedValue()
 	} else if _, err := p.vm.Run(p.cbCreate); err != nil {
 		return err, otto.UndefinedValue()
@@ -82,7 +83,7 @@ func (p *Plugin) compile() error {
 		return err
 	}
 	// validate and precompile callbacks
-	if err := p.compileCall(&p.cbCreate, "Create", "var obj = Create(ctx)"); err != nil {
+	if err := p.compileCall(&p.cbCreate, "Create", "var obj = Create(sh)"); err != nil {
 		return fmt.Errorf("error while compiling Create callback for %s: %s", p.Path, err)
 	} else if err = p.compileCall(&p.cbExec, "Exec", "var ret = Exec(obj, cmd);"); err != nil {
 		return fmt.Errorf("error while compiling Exec callback for %s: %s", p.Path, err)
@@ -108,11 +109,11 @@ func (p *Plugin) clone() *Plugin {
 	return clone
 }
 
-func (p *Plugin) NewSession(ctx session.Context) (err error, clone *Plugin) {
+func (p *Plugin) NewSession(sh models.Shell, timeouts core.Timeouts) (err error, clone *Plugin) {
 	p.Lock()
 	defer p.Unlock()
 	clone = p.clone()
-	err, _ = clone.create(ctx)
+	err, _ = clone.create(sh, timeouts)
 	return
 }
 

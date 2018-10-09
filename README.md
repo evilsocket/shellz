@@ -135,27 +135,27 @@ var headers = {
 /*
  * The Create callback is called whenever a new command has been queued
  * for execution and the session should be initiated, in this case we 
- * simply return the main context object, but it might be used to connect
+ * simply return the main shell object, but it might be used to connect
  * to the endpoint and store the socket on a more complex Object.
  */
-function Create(ctx) {
-    log.Debug("Create(" + ctx + ")");
-    return ctx;
+function Create(sh) {
+    log.Debug("Create(" + sh + ")");
+    return sh;
 }
 
 /*
- * Exec is called for each command, the first argument is the context object
+ * Exec is called for each command, the first argument is the object
  * returned from the Create callback, while the second is a string with the
  * command itself.
  */
-function Exec(ctx, cmd) {
-    log.Debug("running " + cmd + " on " + ctx.Host);
+function Exec(sh, cmd) {
+    log.Debug("running " + cmd + " on " + sh.Host);
     /* 
      * OR
      *
-     * var resp = http.Post(ctx.Host, headers, {"cmd":cmd});
+     * var resp = http.Post(sh.Host, headers, {"cmd":cmd});
      */
-    var resp = http.Get(ctx.Host + "?cmd=" + cmd, headers)
+    var resp = http.Get(sh.Host + "?cmd=" + cmd, headers)
     if( resp.Error ) {
         log.Error("error while running " + cmd + ": " + resp.Error);
         return resp.Error;
@@ -166,8 +166,8 @@ function Exec(ctx, cmd) {
 /*
  * Used to finalize the state of the object (close sockets, etc).
  */
-function Close(obj) {
-    log.Debug("Close(" + ctx + ")");
+function Close(sh) {
+    log.Debug("Close(" + sh + ")");
 }
 ```
 

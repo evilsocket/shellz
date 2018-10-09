@@ -10,6 +10,7 @@ import (
 
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/shellz/models"
 
 	"github.com/reiver/go-telnet"
 )
@@ -18,19 +19,19 @@ type TelnetSession struct {
 	sync.Mutex
 	host     string
 	client   *telnet.Conn
-	timeouts Timeouts
+	timeouts core.Timeouts
 }
 
-func NewTelnet(ctx Context) (error, Session) {
+func NewTelnet(sh models.Shell, timeouts core.Timeouts) (error, Session) {
 	var err error
 
 	t := &TelnetSession{
-		host:     net.JoinHostPort(ctx.Host, strconv.Itoa(ctx.Port)),
-		timeouts: ctx.Timeouts,
+		host:     net.JoinHostPort(sh.Host, strconv.Itoa(sh.Port)),
+		timeouts: timeouts,
 	}
 
 	done := make(chan error)
-	timeout := time.After(ctx.Timeouts.Connect)
+	timeout := time.After(timeouts.Connect)
 	go func() {
 		t.client, err = telnet.DialTo(t.host)
 		done <- err
@@ -45,14 +46,14 @@ func NewTelnet(ctx Context) (error, Session) {
 		}
 	}
 
-	if ctx.Username != "" && ctx.Password != "" {
+	if sh.Identity.Username != "" && sh.Identity.Password != "" {
 		t.doReadUntil(": ")
-		if _, err = t.doWrite([]byte(ctx.Username + "\n")); err != nil {
+		if _, err = t.doWrite([]byte(sh.Identity.Username + "\n")); err != nil {
 			return fmt.Errorf("error while sending telnet username: %s", err), nil
 		}
 
 		t.doReadUntil(": ")
-		if _, err = t.doWrite([]byte(ctx.Password + "\n")); err != nil {
+		if _, err = t.doWrite([]byte(sh.Identity.Password + "\n")); err != nil {
 			return fmt.Errorf("error while sending telnet password: %s", err), nil
 		}
 	}

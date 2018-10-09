@@ -10,7 +10,9 @@ import (
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/net/proxy"
 
+	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/shellz/models"
 )
 
 const (
@@ -21,27 +23,27 @@ const (
 type SSHSession struct {
 	sync.Mutex
 	host     string
-	proxy    Proxy
+	proxy    models.Proxy
 	config   *ssh.ClientConfig
 	client   *ssh.Client
 	session  *ssh.Session
-	timeouts Timeouts
+	timeouts core.Timeouts
 }
 
-func NewSSH(ctx Context) (error, Session) {
-	err, cfg := ctx2ClientConfig(ctx)
+func NewSSH(sh models.Shell, timeouts core.Timeouts) (error, Session) {
+	err, cfg := sh2ClientConfig(sh, timeouts)
 	if err != nil {
 		return err, nil
 	}
 
 	sshs := &SSHSession{
-		host:     net.JoinHostPort(ctx.Host, strconv.Itoa(ctx.Port)),
+		host:     net.JoinHostPort(sh.Host, strconv.Itoa(sh.Port)),
 		config:   cfg,
-		proxy:    ctx.Proxy,
-		timeouts: ctx.Timeouts,
+		proxy:    sh.Proxy,
+		timeouts: timeouts,
 	}
 
-	if sshs.proxy.Address == "" {
+	if sshs.proxy.Empty() {
 		log.Debug("dialing ssh %s ...", sshs.host)
 		if sshs.client, err = ssh.Dial("tcp", sshs.host, sshs.config); err != nil {
 			return err, nil

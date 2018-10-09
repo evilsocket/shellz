@@ -11,6 +11,7 @@ import (
 
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/shellz/models"
 )
 
 func authFromAgent() (err error, auth ssh.AuthMethod) {
@@ -26,35 +27,35 @@ func authFromAgent() (err error, auth ssh.AuthMethod) {
 	return
 }
 
-func authFromFile(ctx Context) (err error, auth ssh.AuthMethod) {
-	log.Debug("loading ssh key from %s ...", ctx.KeyFile)
+func authFromFile(sh models.Shell) (err error, auth ssh.AuthMethod) {
+	log.Debug("loading ssh key from %s ...", sh.Identity.KeyFile)
 
-	if ctx.KeyFile, err = core.ExpandPath(ctx.KeyFile); err != nil {
-		err = fmt.Errorf("error while expanding path '%s': %s", ctx.KeyFile, err)
-	} else if key, err := ioutil.ReadFile(ctx.KeyFile); err != nil {
-		err = fmt.Errorf("error while reading key file %s: %s", ctx.KeyFile, err)
+	if sh.Identity.KeyFile, err = core.ExpandPath(sh.Identity.KeyFile); err != nil {
+		err = fmt.Errorf("error while expanding path '%s': %s", sh.Identity.KeyFile, err)
+	} else if key, err := ioutil.ReadFile(sh.Identity.KeyFile); err != nil {
+		err = fmt.Errorf("error while reading key file %s: %s", sh.Identity.KeyFile, err)
 	} else if signer, err := ssh.ParsePrivateKey(key); err != nil {
-		err = fmt.Errorf("error while parsing key file %s: %s", ctx.KeyFile, err)
+		err = fmt.Errorf("error while parsing key file %s: %s", sh.Identity.KeyFile, err)
 	} else {
 		auth = ssh.PublicKeys(signer)
 	}
 	return
 }
 
-func ctx2ClientConfig(ctx Context) (error, *ssh.ClientConfig) {
+func sh2ClientConfig(sh models.Shell, timeouts core.Timeouts) (error, *ssh.ClientConfig) {
 	authMethods := []ssh.AuthMethod{}
-	if ctx.Password != "" {
-		authMethods = append(authMethods, ssh.Password(ctx.Password))
+	if sh.Identity.Password != "" {
+		authMethods = append(authMethods, ssh.Password(sh.Identity.Password))
 	}
 
-	if ctx.KeyFile == SSHAgentKey {
+	if sh.Identity.KeyFile == SSHAgentKey {
 		if err, auth := authFromAgent(); err != nil {
 			return err, nil
 		} else {
 			authMethods = append(authMethods, auth)
 		}
-	} else if ctx.KeyFile != "" {
-		if err, auth := authFromFile(ctx); err != nil {
+	} else if sh.Identity.KeyFile != "" {
+		if err, auth := authFromFile(sh); err != nil {
 			return err, nil
 		} else {
 			authMethods = append(authMethods, auth)
@@ -63,11 +64,11 @@ func ctx2ClientConfig(ctx Context) (error, *ssh.ClientConfig) {
 
 	return nil, &ssh.ClientConfig{
 		Config: ssh.Config{
-			Ciphers: ctx.Ciphers,
+			Ciphers: sh.Ciphers,
 		},
-		User:            ctx.Username,
+		User:            sh.Identity.Username,
 		Auth:            authMethods,
-		Timeout:         ctx.Timeouts.Connect,
+		Timeout:         timeouts.Connect,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 }
