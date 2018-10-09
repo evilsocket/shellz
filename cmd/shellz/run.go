@@ -170,6 +170,10 @@ func cmdWorker(job queue.Job) {
 			host = core.Dim(shell.Host)
 		}
 
+		if !shell.Proxy.Empty() {
+			host = core.Dim(fmt.Sprintf("%s:%d > %s", shell.Proxy.Address, shell.Proxy.Port, host))
+		}
+
 		if err != nil {
 			trackFailure(false)
 			log.Error("%s (%s %s %s) > %s (%s)%s",
