@@ -7,6 +7,7 @@ import (
 
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/shellz/models"
 )
 
 var (
@@ -33,6 +34,8 @@ var (
 )
 
 func init() {
+	flag.StringVar(&models.Path, "path", models.Path, "Base path of the shellz json files.")
+
 	flag.BoolVar(&doList, "list", doList, "List available shells and exit.")
 
 	flag.StringVar(&doEnable, "enable", "", "Enable the specified shells.")
@@ -54,6 +57,7 @@ func init() {
 	flag.StringVar(&log.File, "log-file", log.File, "Log messages on this file instead of the standard output.")
 	flag.BoolVar(&log.NoColors, "no-colors", log.NoColors, "Disable colors for log messages.")
 	flag.BoolVar(&noBanner, "no-banner", noBanner, "Don't print the initial banner.")
+
 	flag.Parse()
 }
 

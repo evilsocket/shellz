@@ -17,7 +17,9 @@ func main() {
 		log.Raw(core.Banner)
 	}
 
-	if err, Idents, Shells, Groups = models.Load(); err != nil {
+	if err = models.Init(); err != nil {
+		log.Fatal("error while initializing models: %s", err)
+	} else if err, Idents, Shells, Groups = models.Load(); err != nil {
 		log.Fatal("error while loading data: %s", err)
 	} else if len(Shells) == 0 {
 		log.Fatal("no shells found on the system, start creating json files inside %s", models.Paths["shells"])

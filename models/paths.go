@@ -1,26 +1,31 @@
 package models
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 )
 
 var (
-	Paths = map[string]string{
-		"base":    "~/.shellz",
-		"idents":  "~/.shellz/idents",
-		"shells":  "~/.shellz/shells",
-		"plugins": "~/.shellz/plugins",
-	}
+	Path  = "~/.shellz"
+	Paths = map[string]string(nil)
 )
 
-func init() {
-	var err error
+func Init() (err error) {
+	log.Debug("initializing models.Paths from %s ...", Path)
+
+	Paths = map[string]string{
+		"idents":  filepath.Join(Path, "idents"),
+		"shells":  filepath.Join(Path, "shells"),
+		"plugins": filepath.Join(Path, "plugins"),
+	}
+
 	for name, path := range Paths {
 		if Paths[name], err = core.ExpandPath(path); err != nil {
-			log.Fatal("error while expanding path '%s': %s", path, err)
+			return fmt.Errorf("error while expanding path '%s': %s", path, err)
 		} else {
 			path = Paths[name]
 		}
@@ -29,8 +34,10 @@ func init() {
 		if !core.Exists(path) {
 			log.Info("creating folder %s ...", path)
 			if err = os.MkdirAll(path, os.ModePerm); err != nil {
-				log.Fatal("error while creating path '%s': %s", path, err)
+				return fmt.Errorf("error while creating path '%s': %s", path, err)
 			}
 		}
 	}
+
+	return
 }
