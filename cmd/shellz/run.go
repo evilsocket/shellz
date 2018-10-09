@@ -13,10 +13,11 @@ import (
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
 	"github.com/evilsocket/shellz/plugins"
-	"github.com/evilsocket/shellz/queue"
 	"github.com/evilsocket/shellz/session"
 
 	"github.com/dustin/go-humanize"
+	"github.com/evilsocket/islazy/async"
+	"github.com/evilsocket/islazy/str"
 )
 
 type statistics struct {
@@ -33,7 +34,7 @@ type statistics struct {
 
 var (
 	toOutputLock = sync.Mutex{}
-	wq           = queue.New(-1, cmdWorker)
+	wq           = async.NewQueue(-1, cmdWorker)
 	stats        = statistics{}
 )
 
@@ -72,7 +73,7 @@ func processOutput(out []byte, shell models.Shell) string {
 	outs := core.Dim(" <no output>")
 	if out != nil {
 		if toOutput == "" {
-			outs = fmt.Sprintf("\n\n%s\n", core.Trim(string(out)))
+			outs = fmt.Sprintf("\n\n%s\n", str.Trim(string(out)))
 		} else {
 			outs = toOutputFile(shell, out)
 		}
@@ -133,7 +134,7 @@ func findSessionFor(sh models.Shell) (err error, sess session.Session) {
 	return
 }
 
-func cmdWorker(job queue.Job) {
+func cmdWorker(job async.Job) {
 	shell := job.(models.Shell)
 	start := time.Now()
 

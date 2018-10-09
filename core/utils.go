@@ -7,37 +7,6 @@ import (
 	"strings"
 )
 
-const (
-	defaultTrimSet = "\r\n\t "
-)
-
-func Trim(s string) string {
-	return strings.Trim(s, defaultTrimSet)
-}
-
-func TrimRight(s string) string {
-	return strings.TrimRight(s, defaultTrimSet)
-}
-
-func TrimLeft(s string) string {
-	return strings.TrimLeft(s, defaultTrimSet)
-}
-
-func SepSplit(sv string, sep string) []string {
-	filtered := make([]string, 0)
-	for _, part := range strings.Split(sv, sep) {
-		part = Trim(part)
-		if part != "" {
-			filtered = append(filtered, part)
-		}
-	}
-	return filtered
-}
-
-func CommaSplit(csv string) []string {
-	return SepSplit(csv, ",")
-}
-
 func ExpandPath(path string) (string, error) {
 	usr, err := user.Current()
 	if err != nil {

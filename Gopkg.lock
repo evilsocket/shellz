@@ -11,6 +11,17 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:1a893eabcbf5334b18303f65bc1800d592afe10ef60437cb31018dace76a891a"
+  name = "github.com/evilsocket/islazy"
+  packages = [
+    "async",
+    "str",
+  ]
+  pruneopts = "UT"
+  revision = "309f42695e09236e26a803a5951750043b615918"
+
+[[projects]]
+  branch = "master"
   digest = "1:8ca619fd5ff6877c2b638dcc6f0dafd70dd54117c0ab64456722166edcc7e305"
   name = "github.com/reiver/go-oi"
   packages = ["."]
@@ -56,7 +67,7 @@
     "ssh/agent",
   ]
   pruneopts = "UT"
-  revision = "5295e8364332db77d75fce11f1d19c053919a9c9"
+  revision = "7c1a557ab941a71c619514f229f0b27ccb0c27cf"
 
 [[projects]]
   branch = "master"
@@ -85,6 +96,8 @@
   analyzer-version = 1
   input-imports = [
     "github.com/dustin/go-humanize",
+    "github.com/evilsocket/islazy/async",
+    "github.com/evilsocket/islazy/str",
     "github.com/reiver/go-telnet",
     "github.com/robertkrimen/otto",
     "golang.org/x/crypto/ssh",

@@ -11,6 +11,7 @@ import (
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
 
+	"github.com/evilsocket/islazy/str"
 	"github.com/reiver/go-telnet"
 )
 
@@ -116,7 +117,7 @@ func (t *TelnetSession) Exec(cmd string) ([]byte, error) {
 		return nil, err
 	} else {
 		s = strings.Replace(s, "PLACEHOLDER", "", -1)
-		s = core.TrimLeft(s)
+		s = str.TrimLeft(s)
 		return []byte(s), nil
 	}
 }

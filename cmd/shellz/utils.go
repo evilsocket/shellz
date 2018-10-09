@@ -3,9 +3,10 @@ package main
 import (
 	"strings"
 
-	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
+
+	"github.com/evilsocket/islazy/str"
 )
 
 func doFilterSelection(expr string) models.Shells {
@@ -40,7 +41,7 @@ func doEnabledSelection(m models.Shells, includeDisabled bool) models.Shells {
 
 func doShellSelection(csFilters string, includeDisabled bool) (error, models.Shells) {
 	sel := models.Shells{}
-	for _, filter := range core.CommaSplit(csFilters) {
+	for _, filter := range str.Comma(csFilters) {
 		found := doFilterSelection(filter)
 		for name, shell := range doEnabledSelection(found, includeDisabled) {
 			sel[name] = shell
