@@ -2,6 +2,8 @@ package session
 
 import (
 	"fmt"
+	"net"
+	"strconv"
 	"sync"
 	"time"
 
@@ -33,7 +35,7 @@ func NewSSH(ctx Context) (error, Session) {
 	}
 
 	sshs := &SSHSession{
-		host:     fmt.Sprintf("%s:%d", ctx.Host, ctx.Port),
+		host:     net.JoinHostPort(ctx.Host, strconv.Itoa(ctx.Port)),
 		config:   cfg,
 		proxy:    ctx.Proxy,
 		timeouts: ctx.Timeouts,

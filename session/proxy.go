@@ -2,6 +2,8 @@ package session
 
 import (
 	"fmt"
+	"net"
+	"strconv"
 )
 
 type Proxy struct {
@@ -12,8 +14,9 @@ type Proxy struct {
 }
 
 func (p Proxy) String() string {
+	host := net.JoinHostPort(p.Address, strconv.Itoa(p.Port))
 	if p.Username != "" {
-		return fmt.Sprintf("%s:%s@%s:%d", p.Username, p.Password, p.Address, p.Port)
+		return fmt.Sprintf("%s:%s@%s", p.Username, p.Password, host)
 	}
-	return fmt.Sprintf("%s:%d", p.Address, p.Port)
+	return host
 }
