@@ -11,7 +11,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:fea138a480a6885bfe0ecd5312ee0cc5f262d6d3ff2f244750245ea697a5195d"
+  digest = "1:d0adcb3a004f696b01a35ed3ea4e074d6a8f61a9a8040541534ac8af9d91c0ac"
   name = "github.com/evilsocket/islazy"
   packages = [
     "async",
@@ -21,7 +21,7 @@
     "tui",
   ]
   pruneopts = "UT"
-  revision = "3506144d586b919961d24e0d2ef96a5d954323c2"
+  revision = "a59fb7ee7e6a5c2afe6b96d1a15670225fb9ac8b"
 
 [[projects]]
   branch = "master"
