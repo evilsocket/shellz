@@ -6,7 +6,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/plugins"
 
@@ -33,23 +32,23 @@ func showIdentsList() {
 		i := Idents[name]
 		key := i.KeyFile
 		if key == "" {
-			key = core.Dim("<empty>")
+			key = tui.Dim("<empty>")
 		}
 		pass := strings.Repeat("*", len(i.Password))
 		if pass == "" {
-			pass = core.Dim("<empty>")
+			pass = tui.Dim("<empty>")
 		}
 
 		rows = append(rows, []string{
-			core.Bold(i.Name),
+			tui.Bold(i.Name),
 			i.Username,
 			key,
 			pass,
-			// core.Dim(i.Path),
+			// tui.Dim(i.Path),
 		})
 	}
 
-	fmt.Printf("\n%s\n", core.Bold("identities"))
+	fmt.Printf("\n%s\n", tui.Bold("identities"))
 	tui.Table(os.Stdout, cols, rows)
 }
 
@@ -63,12 +62,12 @@ func showPluginsList() {
 
 		plugins.Each(func(p *plugins.Plugin) {
 			rows = append(rows, []string{
-				core.Bold(p.Name),
-				core.Dim(p.Path),
+				tui.Bold(p.Name),
+				tui.Dim(p.Path),
 			})
 		})
 
-		fmt.Printf("\n%s\n", core.Bold("plugins"))
+		fmt.Printf("\n%s\n", tui.Bold("plugins"))
 		tui.Table(os.Stdout, cols, rows)
 	}
 }
@@ -89,7 +88,7 @@ func showShellsList() {
 	if err, onShells = doShellSelection(onFilter, true); err != nil {
 		log.Fatal("%s", err)
 	} else if nShells = len(onShells); nShells == 0 {
-		log.Fatal("no shell selected by the filter %s", core.Dim(onFilter))
+		log.Fatal("no shell selected by the filter %s", tui.Dim(onFilter))
 	}
 
 	keys := []string{}
@@ -100,31 +99,31 @@ func showShellsList() {
 
 	for _, name := range keys {
 		sh := onShells[name]
-		en := core.Green("✔")
+		en := tui.Green("✔")
 		if !sh.Enabled {
-			en = core.Red("✖")
+			en = tui.Red("✖")
 		}
 		row := []string{
-			core.Bold(sh.Name),
-			core.Blue(strings.Join(sh.Groups, ", ")),
-			core.Dim(sh.Type),
+			tui.Bold(sh.Name),
+			tui.Blue(strings.Join(sh.Groups, ", ")),
+			tui.Dim(sh.Type),
 			sh.Host,
 			fmt.Sprintf("%d", sh.Port),
-			core.Yellow(sh.IdentityName),
+			tui.Yellow(sh.IdentityName),
 			en,
-			// core.Dim(sh.Path),
+			// tui.Dim(sh.Path),
 		}
 
 		if !sh.Enabled {
 			for i := range row {
-				row[i] = core.Dim(row[i])
+				row[i] = tui.Dim(row[i])
 			}
 		}
 
 		rows = append(rows, row)
 	}
 
-	fmt.Printf("\n%s\n", core.Bold("shells"))
+	fmt.Printf("\n%s\n", tui.Bold("shells"))
 	tui.Table(os.Stdout, cols, rows)
 }
 

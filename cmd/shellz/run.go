@@ -9,15 +9,16 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
 	"github.com/evilsocket/shellz/plugins"
 	"github.com/evilsocket/shellz/session"
 
 	"github.com/dustin/go-humanize"
+
 	"github.com/evilsocket/islazy/async"
 	"github.com/evilsocket/islazy/str"
+	"github.com/evilsocket/islazy/tui"
 )
 
 type statistics struct {
@@ -63,14 +64,14 @@ func toOutputFile(shell models.Shell, out []byte) (outs string) {
 		} else if wrote != size {
 			outs = fmt.Sprintf(" > error while saving to %s: size is %d, wrote %d", fileName, size, wrote)
 		} else {
-			outs = core.Dim(fmt.Sprintf(" > %d bytes saved to %s", size, fileName))
+			outs = tui.Dim(fmt.Sprintf(" > %d bytes saved to %s", size, fileName))
 		}
 	}
 	return
 }
 
 func processOutput(out []byte, shell models.Shell) string {
-	outs := core.Dim(" <no output>")
+	outs := tui.Dim(" <no output>")
 	if out != nil {
 		if toOutput == "" {
 			outs = fmt.Sprintf("\n\n%s\n", str.Trim(string(out)))
@@ -82,7 +83,7 @@ func processOutput(out []byte, shell models.Shell) string {
 }
 
 func onTestFail(sh models.Shell, err error) {
-	log.Warning("shell %s failed with: %s", core.Bold(sh.Name), err)
+	log.Warning("shell %s failed with: %s", tui.Bold(sh.Name), err)
 	sh.Enabled = false
 	if err := sh.Save(); err != nil {
 		log.Error("error while disabling shell %s: %s", sh.Name, err)
@@ -90,7 +91,7 @@ func onTestFail(sh models.Shell, err error) {
 }
 
 func onTestSuccess(sh models.Shell) {
-	log.Info("shell %s is working", core.Bold(sh.Name))
+	log.Info("shell %s is working", tui.Bold(sh.Name))
 	if !sh.Enabled {
 		log.Debug("enabling shell %s", sh.Name)
 		sh.Enabled = true
@@ -151,7 +152,7 @@ func cmdWorker(job async.Job) {
 	defer session.Close()
 
 	out, err := session.Exec(command)
-	took := core.Dim(time.Since(start).String())
+	took := tui.Dim(time.Since(start).String())
 	trackOutput(out)
 
 	if doTest {
@@ -166,41 +167,41 @@ func cmdWorker(job async.Job) {
 		outs := processOutput(out, shell)
 		host := ""
 		if shell.Identity.Username != "" {
-			host = core.Dim(fmt.Sprintf("%s@%s", shell.Identity.Username, shell.Host))
+			host = tui.Dim(fmt.Sprintf("%s@%s", shell.Identity.Username, shell.Host))
 		} else {
-			host = core.Dim(shell.Host)
+			host = tui.Dim(shell.Host)
 		}
 
 		if !shell.Proxy.Empty() {
-			host = core.Dim(fmt.Sprintf("%s:%d > %s", shell.Proxy.Address, shell.Proxy.Port, host))
+			host = tui.Dim(fmt.Sprintf("%s:%d > %s", shell.Proxy.Address, shell.Proxy.Port, host))
 		}
 
 		if err != nil {
 			trackFailure(false)
 			log.Error("%s (%s %s %s) > %s (%s)%s",
-				core.Bold(shell.Name),
-				core.Green(shell.Type),
+				tui.Bold(shell.Name),
+				tui.Green(shell.Type),
 				host,
 				took,
 				command,
-				core.Red(err.Error()),
+				tui.Red(err.Error()),
 				outs)
 		} else {
 			trackSuccess()
 			log.Info("%s (%s %s %s) > %s%s",
-				core.Bold(shell.Name),
-				core.Green(shell.Type),
+				tui.Bold(shell.Name),
+				tui.Green(shell.Type),
 				host,
 				took,
-				core.Blue(command),
+				tui.Blue(command),
 				outs)
 		}
 	}
 }
 
 func viewStats() {
-	log.Raw(core.Dim("_______________________"))
-	log.Raw(core.Bold("Statistics\n"))
+	log.Raw(tui.Dim("_______________________"))
+	log.Raw(tui.Bold("Statistics\n"))
 
 	totTime := stats.Done.Sub(stats.Started)
 	avgTime := time.Duration(0)
@@ -211,11 +212,11 @@ func viewStats() {
 	log.Raw("total shells : %d", stats.Shells)
 	log.Raw("total time   : %s (%s/shell avg)", totTime, avgTime)
 	log.Raw("total output : %s", humanize.Bytes(stats.Output))
-	log.Raw(core.Green("ok           : %d"), stats.Success)
+	log.Raw(tui.Green("ok           : %d"), stats.Success)
 	if stats.Failed > 0 {
-		log.Raw(core.Red("ko           : %d ( %d connect / %d exec )"), stats.Failed, stats.FailedConnect, stats.FailedExec)
+		log.Raw(tui.Red("ko           : %d ( %d connect / %d exec )"), stats.Failed, stats.FailedConnect, stats.FailedExec)
 	} else {
-		log.Raw(core.Dim("ko           : 0"))
+		log.Raw(tui.Dim("ko           : 0"))
 	}
 }
 
@@ -224,13 +225,13 @@ func runCommand() {
 	if err, onShells = doShellSelection(onFilter, doForce); err != nil {
 		log.Fatal("%s", err)
 	} else if nShells = len(onShells); nShells == 0 {
-		log.Fatal("no enabled shell selected by the filter %s (use the -force argument to select disabled shells)", core.Dim(onFilter))
+		log.Fatal("no enabled shell selected by the filter %s (use the -force argument to select disabled shells)", tui.Dim(onFilter))
 	}
 
 	if doTest {
 		log.Debug("testing %d shells ...", nShells)
 	} else {
-		log.Debug("running %s on %d shells ...", core.Dim(command), nShells)
+		log.Debug("running %s on %d shells ...", tui.Dim(command), nShells)
 	}
 
 	stats.Shells = uint64(nShells)

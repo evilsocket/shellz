@@ -3,8 +3,6 @@ package log
 import (
 	"fmt"
 	"os"
-
-	"github.com/evilsocket/shellz/core"
 )
 
 func Raw(format string, args ...interface{}) {
@@ -16,7 +14,7 @@ func Raw(format string, args ...interface{}) {
 }
 
 func color(level int, format string, args ...interface{}) {
-	Raw(colors[level]+labels[level]+core.RESET+" "+format, args...)
+	Raw(colors[level]+labels[level]+RESET+" "+format, args...)
 }
 
 func Info(format string, args ...interface{}) {

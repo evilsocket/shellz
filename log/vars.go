@@ -3,8 +3,6 @@ package log
 import (
 	"os"
 	"sync"
-
-	"github.com/evilsocket/shellz/core"
 )
 
 const (
@@ -15,6 +13,28 @@ const (
 	WARNING
 	ERROR
 	FATAL
+)
+
+// https://misc.flogisoft.com/bash/tip_colors_and_formatting
+var (
+	BOLD = "\033[1m"
+	DIM  = "\033[2m"
+
+	RED    = "\033[31m"
+	GREEN  = "\033[32m"
+	BLUE   = "\033[34m"
+	YELLOW = "\033[33m"
+
+	FG_BLACK = "\033[30m"
+	FG_WHITE = "\033[97m"
+
+	BG_DGRAY  = "\033[100m"
+	BG_RED    = "\033[41m"
+	BG_GREEN  = "\033[42m"
+	BG_YELLOW = "\033[43m"
+	BG_LBLUE  = "\033[104m"
+
+	RESET = "\033[0m"
 )
 
 var (
@@ -33,13 +53,13 @@ var (
 	}
 
 	colors = map[int]string{
-		DEBUG:     core.DIM + core.FG_BLACK + core.BG_DGRAY,
-		INFO:      core.FG_WHITE + core.BG_GREEN,
-		OUTPUT:    core.DIM + core.FG_BLACK + core.BG_DGRAY,
-		IMPORTANT: core.FG_WHITE + core.BG_LBLUE,
-		WARNING:   core.FG_WHITE + core.BG_YELLOW,
-		ERROR:     core.FG_WHITE + core.BG_RED,
-		FATAL:     core.FG_WHITE + core.BG_RED + core.BOLD,
+		DEBUG:     DIM + FG_BLACK + BG_DGRAY,
+		INFO:      FG_WHITE + BG_GREEN,
+		OUTPUT:    DIM + FG_BLACK + BG_DGRAY,
+		IMPORTANT: FG_WHITE + BG_LBLUE,
+		WARNING:   FG_WHITE + BG_YELLOW,
+		ERROR:     FG_WHITE + BG_RED,
+		FATAL:     FG_WHITE + BG_RED + BOLD,
 	}
 
 	lock   = &sync.Mutex{}
@@ -59,20 +79,20 @@ func Init() {
 			colors[level] = ""
 		}
 
-		core.BOLD = ""
-		core.DIM = ""
-		core.RED = ""
-		core.GREEN = ""
-		core.BLUE = ""
-		core.YELLOW = ""
-		core.FG_BLACK = ""
-		core.FG_WHITE = ""
-		core.BG_DGRAY = ""
-		core.BG_RED = ""
-		core.BG_GREEN = ""
-		core.BG_YELLOW = ""
-		core.BG_LBLUE = ""
-		core.RESET = ""
+		BOLD = ""
+		DIM = ""
+		RED = ""
+		GREEN = ""
+		BLUE = ""
+		YELLOW = ""
+		FG_BLACK = ""
+		FG_WHITE = ""
+		BG_DGRAY = ""
+		BG_RED = ""
+		BG_GREEN = ""
+		BG_YELLOW = ""
+		BG_LBLUE = ""
+		RESET = ""
 	}
 }
 

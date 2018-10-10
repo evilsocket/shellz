@@ -3,6 +3,8 @@ package core
 import (
 	"math/rand"
 	"time"
+
+	"github.com/evilsocket/islazy/tui"
 )
 
 const (
@@ -18,10 +20,10 @@ var (
 
 func init() {
 	colors := []func(s string) string{
-		Red,
-		Blue,
-		Yellow,
-		Green,
+		tui.Red,
+		tui.Blue,
+		tui.Yellow,
+		tui.Green,
 	}
 	rand.Seed(time.Now().Unix())
 
@@ -37,7 +39,7 @@ func init() {
       ░   ░  ░  ░   ░  ░    ░  ░    ░  ░  ░ ░    
                                         ░  `) +
 		"v" + Version + "\n" +
-		Dim("Made with ") + Red("❤") + Dim("  by "+Author) +
+		tui.Dim("Made with ") + tui.Red("❤") + tui.Dim("  by "+Author) +
 		"\n"
 
 }

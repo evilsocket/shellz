@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/log"
 	"github.com/evilsocket/shellz/models"
+
+	"github.com/evilsocket/islazy/tui"
 )
 
 var (
@@ -71,8 +72,8 @@ func showHelp() {
 	fmt.Printf("Examples:\n\n")
 
 	for _, e := range examples {
-		fmt.Printf("  %s\n", core.Dim("# "+e.help))
-		fmt.Printf("  %s\n", core.Bold(e.cmd))
+		fmt.Printf("  %s\n", tui.Dim("# "+e.help))
+		fmt.Printf("  %s\n", tui.Bold(e.cmd))
 		fmt.Println()
 	}
 
