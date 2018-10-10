@@ -1,7 +1,7 @@
 package plugins
 
 import (
-	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/islazy/log"
 )
 
 type logPackage struct{}

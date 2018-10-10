@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/islazy/log"
 )
 
 func runEnable(filter string, enable bool) {

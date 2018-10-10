@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/islazy/log"
 
 	"github.com/evilsocket/islazy/fs"
 )

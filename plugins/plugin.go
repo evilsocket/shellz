@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/evilsocket/shellz/core"
-	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/shellz/models"
 
 	"github.com/evilsocket/islazy/async"

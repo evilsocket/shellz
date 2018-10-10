@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/shellz/models"
 
 	"github.com/evilsocket/islazy/tui"
@@ -54,9 +54,9 @@ func init() {
 	flag.DurationVar(&timeouts.Read, "read-timeout", timeouts.Read, "Read timeout.")
 	flag.DurationVar(&timeouts.Write, "write-timeout", timeouts.Write, "Write timeout.")
 
-	flag.BoolVar(&log.DebugMessages, "debug", log.DebugMessages, "Enable debug messages.")
-	flag.StringVar(&log.File, "log-file", log.File, "Log messages on this file instead of the standard output.")
-	flag.BoolVar(&log.NoColors, "no-colors", log.NoColors, "Disable colors for log messages.")
+	flag.IntVar((*int)(&log.Level), "log-level", int(log.Level), "Set log level.")
+	flag.StringVar(&log.Output, "log-file", log.Output, "Log messages on this file instead of the standard output.")
+	flag.BoolVar(&log.NoEffects, "no-effects", log.NoEffects, "Disable text effects and colors.")
 	flag.BoolVar(&noBanner, "no-banner", noBanner, "Don't print the initial banner.")
 
 	flag.Parse()

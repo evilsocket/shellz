@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/shellz/plugins"
 
 	"github.com/evilsocket/islazy/tui"

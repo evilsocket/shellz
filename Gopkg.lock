@@ -2,26 +2,27 @@
 
 
 [[projects]]
-  branch = "master"
   digest = "1:6f9339c912bbdda81302633ad7e99a28dfa5a639c864061f1929510a9a64aa74"
   name = "github.com/dustin/go-humanize"
   packages = ["."]
   pruneopts = "UT"
   revision = "9f541cc9db5d55bce703bd99987c9d5cb8eea45e"
+  version = "v1.0.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:4f73710df9e6234a985d462c34d56c6e8f2a02a1208c0dc39223e81f6841d107"
+  digest = "1:44251e6f0d16ebfa3507af9abb572449bca99cf8bf0500dad0288a29c085ecae"
   name = "github.com/evilsocket/islazy"
   packages = [
     "async",
     "fs",
+    "log",
     "plugin",
     "str",
     "tui",
   ]
   pruneopts = "UT"
-  revision = "c192133938d92b7c96954d8077c4373d48ca65cc"
+  revision = "b7d719c6ad276a72e76bebbf75f2c7c8d648f253"
+  version = "v1.2.0"
 
 [[projects]]
   branch = "master"
@@ -101,6 +102,7 @@
     "github.com/dustin/go-humanize",
     "github.com/evilsocket/islazy/async",
     "github.com/evilsocket/islazy/fs",
+    "github.com/evilsocket/islazy/log",
     "github.com/evilsocket/islazy/plugin",
     "github.com/evilsocket/islazy/str",
     "github.com/evilsocket/islazy/tui",

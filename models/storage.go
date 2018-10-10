@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 
-	"github.com/evilsocket/shellz/log"
+	"github.com/evilsocket/islazy/log"
 
 	"github.com/evilsocket/islazy/fs"
 )
