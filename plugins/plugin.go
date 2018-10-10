@@ -11,6 +11,14 @@ import (
 	"github.com/evilsocket/islazy/plugin"
 )
 
+var (
+	defines = map[string]interface{}{
+		"log":  getLOG(),
+		"tcp":  getTCP(),
+		"http": getHTTP(),
+	}
+)
+
 type Plugin struct {
 	*plugin.Plugin
 
@@ -19,14 +27,12 @@ type Plugin struct {
 }
 
 func LoadPlugin(path string) (error, *Plugin) {
-	if err, p := plugin.Load(path); err != nil {
+	if err, p := plugin.Load(path, defines); err != nil {
 		return err, nil
 	} else {
-		pp := &Plugin{
+		return nil, &Plugin{
 			Plugin: p,
 		}
-		pp.doDefines()
-		return nil, pp
 	}
 }
 
@@ -83,6 +89,7 @@ func (p *Plugin) Exec(cmd string) ([]byte, error) {
 func (p *Plugin) Close() {
 	p.Lock()
 	defer p.Unlock()
+
 	if err, _ := p.Call("Close", p.ctx); err != nil {
 		log.Warning("error while running Close callback for plugin %s: %s", p.Name, err)
 	}
