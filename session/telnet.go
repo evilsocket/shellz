@@ -31,7 +31,7 @@ func NewTelnet(sh models.Shell, timeouts core.Timeouts) (error, Session) {
 		timeouts: timeouts,
 	}
 
-	err, _ = async.WithTimeout(timeouts.Connect, func() interface{} {
+	_, err = async.WithTimeout(timeouts.Connect, func() interface{} {
 		t.client, err = telnet.DialTo(t.host)
 		return err
 	})
@@ -64,7 +64,7 @@ type rw struct {
 }
 
 func (t *TelnetSession) doRead(buf []byte) (int, error) {
-	err, obj := async.WithTimeout(t.timeouts.Read, func() interface{} {
+	obj, err := async.WithTimeout(t.timeouts.Read, func() interface{} {
 		n, err := t.client.Read(buf)
 		return rw{e: err, n: n}
 	})
@@ -77,7 +77,7 @@ func (t *TelnetSession) doRead(buf []byte) (int, error) {
 }
 
 func (t *TelnetSession) doWrite(buf []byte) (int, error) {
-	err, obj := async.WithTimeout(t.timeouts.Write, func() interface{} {
+	obj, err := async.WithTimeout(t.timeouts.Write, func() interface{} {
 		n, err := t.client.Write(buf)
 		return rw{e: err, n: n}
 	})

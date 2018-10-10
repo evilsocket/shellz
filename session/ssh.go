@@ -43,7 +43,7 @@ func NewSSH(sh models.Shell, timeouts core.Timeouts) (error, Session) {
 		timeouts: timeouts,
 	}
 
-	err, _ = async.WithTimeout(sshs.timeouts.Connect, func() interface{} {
+	_, err = async.WithTimeout(sshs.timeouts.Connect, func() interface{} {
 		if sshs.proxy.Empty() {
 			log.Debug("dialing ssh %s ...", sshs.host)
 			if sshs.client, err = ssh.Dial("tcp", sshs.host, sshs.config); err != nil {
@@ -89,7 +89,7 @@ func (s *SSHSession) Exec(cmd string) ([]byte, error) {
 	s.Lock()
 	defer s.Unlock()
 
-	err, obj := async.WithTimeout(s.timeouts.Write+s.timeouts.Read, func() interface{} {
+	obj, err := async.WithTimeout(s.timeouts.Write+s.timeouts.Read, func() interface{} {
 		out, err := s.session.CombinedOutput(cmd)
 		return cmdResult{out: out, err: err}
 	})
