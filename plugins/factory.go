@@ -18,7 +18,7 @@ var (
 func Load(path string) error {
 	log.Debug("loading plugins from %s ...", path)
 	return fs.Glob(path, "*.js", func(fileName string) error {
-		if err, plugin := LoadPlugin(fileName, true); err != nil {
+		if err, plugin := LoadPlugin(fileName); err != nil {
 			return fmt.Errorf("error while loading plugin '%s': %s", fileName, err)
 		} else if taken, found := plugins[plugin.Name]; found {
 			return fmt.Errorf("plugin '%s' has name %s which is already taken by '%s'", fileName, plugin.Name, taken.Path)
