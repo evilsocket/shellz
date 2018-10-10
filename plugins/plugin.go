@@ -27,7 +27,7 @@ type Plugin struct {
 }
 
 func LoadPlugin(path string) (error, *Plugin) {
-	if err, p := plugin.Load(path, defines); err != nil {
+	if p, err := plugin.Load(path, defines); err != nil {
 		return err, nil
 	} else {
 		return nil, &Plugin{
@@ -46,7 +46,7 @@ func (p *Plugin) NewSession(sh models.Shell, timeouts core.Timeouts) (err error,
 
 	clone.timeouts = timeouts
 	err, _ = async.WithTimeout(timeouts.Connect, func() interface{} {
-		err, clone.ctx = clone.Call("Create", sh)
+		clone.ctx, err = clone.Call("Create", sh)
 		return err
 	})
 	if err != nil {
@@ -69,7 +69,7 @@ func (p *Plugin) Exec(cmd string) ([]byte, error) {
 	defer p.Unlock()
 
 	err, obj := async.WithTimeout(p.timeouts.Read+p.timeouts.Write, func() interface{} {
-		if err, ret := p.Call("Exec", p.ctx, cmd); err != nil {
+		if ret, err := p.Call("Exec", p.ctx, cmd); err != nil {
 			return eres{err: err}
 		} else if ret == nil {
 			return eres{err: fmt.Errorf("return value of Exec is null")}
