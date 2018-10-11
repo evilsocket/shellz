@@ -3,8 +3,8 @@ package plugins
 import (
 	"fmt"
 
-	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/islazy/log"
+	"github.com/evilsocket/shellz/core"
 	"github.com/evilsocket/shellz/models"
 
 	"github.com/evilsocket/islazy/async"
@@ -60,8 +60,8 @@ func (p *Plugin) Type() string {
 }
 
 type eres struct {
-	err   error
-	array []byte
+	err error
+	buf []byte
 }
 
 func (p *Plugin) Exec(cmd string) ([]byte, error) {
@@ -73,17 +73,17 @@ func (p *Plugin) Exec(cmd string) ([]byte, error) {
 			return eres{err: err}
 		} else if ret == nil {
 			return eres{err: fmt.Errorf("return value of Exec is null")}
-		} else if array, ok := ret.([]byte); !ok {
+		} else if buf, ok := ret.([]byte); !ok {
 			return eres{err: fmt.Errorf("error while converting %v to []byte", ret)}
 		} else {
-			return eres{array: array}
+			return eres{buf: buf}
 		}
 	})
 	if err != nil {
 		return nil, err
 	}
 	er := obj.(eres)
-	return er.array, er.err
+	return er.buf, er.err
 }
 
 func (p *Plugin) Close() {
