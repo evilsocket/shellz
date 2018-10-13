@@ -8,7 +8,7 @@
   </p>
 </p>
 
-`shellz` is a small utility to track and control your ssh, telnet, web and custom shells ([demo](https://www.youtube.com/watch?v=ZjMRbUhw9z4)).
+`shellz` is a small utility to track and control your ssh, telnet, web and custom shells and tunnels ([demo](https://www.youtube.com/watch?v=ZjMRbUhw9z4)).
 
 ## Installation
 
