@@ -24,6 +24,7 @@ type Shell struct {
 	Enabled      bool     `json:"enabled"`
 	Groups       []string `json:"groups"`
 	Proxy        Proxy    `json:"proxy"`
+	Tunnel       Tunnel   `json:"tunnel"`
 
 	Identity *Identity `json:"-"`
 	Path     string    `json:"-"`

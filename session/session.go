@@ -7,8 +7,9 @@ import (
 
 var (
 	managers = map[string]Handler{
-		"ssh":    NewSSH,
-		"telnet": NewTelnet,
+		"ssh":        NewSSH,
+		"ssh.tunnel": NewSSHTun,
+		"telnet":     NewTelnet,
 	}
 )
 

@@ -37,6 +37,8 @@ func main() {
 		runEnable(doEnable, true)
 	} else if doDisable != "" {
 		runEnable(doDisable, false)
+	} else if doTunnel {
+		runTunnel()
 	} else if doTest {
 		command = "echo 1" // this should run on every OS ^_^
 		runCommand()

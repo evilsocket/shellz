@@ -20,6 +20,7 @@ var (
 	doForce   = false
 	doList    = false
 	doTest    = false
+	doTunnel  = false
 	doEnable  = ""
 	doDisable = ""
 	doStats   = false

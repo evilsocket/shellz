@@ -35,7 +35,7 @@ type statistics struct {
 
 var (
 	toOutputLock = sync.Mutex{}
-	wq           = async.NewQueue(-1, cmdWorker)
+	runQueue     = async.NewQueue(-1, cmdWorker)
 	stats        = statistics{}
 )
 
@@ -238,10 +238,10 @@ func runCommand() {
 	stats.Started = time.Now()
 
 	for name := range onShells {
-		wq.Add(onShells[name])
+		runQueue.Add(onShells[name])
 	}
 
-	wq.WaitDone()
+	runQueue.WaitDone()
 
 	stats.Done = time.Now()
 	if doStats {

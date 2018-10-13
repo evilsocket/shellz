@@ -31,6 +31,8 @@ var (
 		{"shellz -run id -on 'machineA, machineB'", "run the command 'id' on machineA and machineB"},
 		{"shellz -run uptime -to all.txt", "run the command 'uptime' on every shell and append all outputs to the 'all.txt' file"},
 		{"shellz -run uptime -to \"{{.Identity.Username}}_{{.Name}}.txt\"", "run the command 'uptime' on every shell and save each outputs to a different file using per-shell data."},
+
+		{"shellz -tunnel -on some-tunnel", "start a ssh reverse tunnel"},
 	}
 )
 
@@ -41,6 +43,8 @@ func init() {
 
 	flag.StringVar(&doEnable, "enable", "", "Enable the specified shells.")
 	flag.StringVar(&doDisable, "disable", "", "Disable the specified shells.")
+
+	flag.BoolVar(&doTunnel, "tunnel", doTunnel, "Starts a SSH reverse tunnel.")
 
 	flag.BoolVar(&doTest, "test", doTest, "Attempt to run a test command on the selected shells and disable the ones who failed.")
 	flag.BoolVar(&doForce, "force", doForce, "Include disabled shells in the selection.")

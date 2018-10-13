@@ -73,6 +73,12 @@ func showPluginsList() {
 }
 
 func showShellsList() {
+	if err, onShells = doShellSelection(onFilter, true); err != nil {
+		log.Fatal("%s", err)
+	} else if nShells = len(onShells); nShells == 0 {
+		log.Fatal("no shell selected by the filter %s", tui.Dim(onFilter))
+	}
+
 	rows := [][]string{}
 	cols := []string{
 		"Name",
@@ -82,13 +88,27 @@ func showShellsList() {
 		"Port",
 		"Identity",
 		"Enabled",
-		// "Path",
 	}
 
-	if err, onShells = doShellSelection(onFilter, true); err != nil {
-		log.Fatal("%s", err)
-	} else if nShells = len(onShells); nShells == 0 {
-		log.Fatal("no shell selected by the filter %s", tui.Dim(onFilter))
+	hasTunnel := false
+	for _, sh := range onShells {
+		if !sh.Tunnel.Empty() {
+			hasTunnel = true
+			break
+		}
+	}
+
+	if hasTunnel {
+		cols = []string{
+			"Name",
+			"Groups",
+			"Type",
+			"Host",
+			"Tunnel",
+			"Port",
+			"Identity",
+			"Enabled",
+		}
 	}
 
 	keys := []string{}
@@ -98,20 +118,35 @@ func showShellsList() {
 	sort.Strings(keys)
 
 	for _, name := range keys {
+		var row []string
+
 		sh := onShells[name]
 		en := tui.Green("✔")
 		if !sh.Enabled {
 			en = tui.Red("✖")
 		}
-		row := []string{
-			tui.Bold(sh.Name),
-			tui.Blue(strings.Join(sh.Groups, ", ")),
-			tui.Dim(sh.Type),
-			sh.Host,
-			fmt.Sprintf("%d", sh.Port),
-			tui.Yellow(sh.IdentityName),
-			en,
-			// tui.Dim(sh.Path),
+
+		if hasTunnel {
+			row = []string{
+				tui.Bold(sh.Name),
+				tui.Blue(strings.Join(sh.Groups, ", ")),
+				tui.Dim(sh.Type),
+				sh.Host,
+				sh.Tunnel.String(),
+				fmt.Sprintf("%d", sh.Port),
+				tui.Yellow(sh.IdentityName),
+				en,
+			}
+		} else {
+			row = []string{
+				tui.Bold(sh.Name),
+				tui.Blue(strings.Join(sh.Groups, ", ")),
+				tui.Dim(sh.Type),
+				sh.Host,
+				fmt.Sprintf("%d", sh.Port),
+				tui.Yellow(sh.IdentityName),
+				en,
+			}
 		}
 
 		if !sh.Enabled {

@@ -103,6 +103,33 @@ cat ~/.shellz/shells/tnas.json
 }
 ```
 
+### Reverse Tunnels
+
+`shellz` can be used for starting reverse SSH tunnels, for instance, let's create the `~/.shellz/shells/mytunnel.json` file:
+
+```json
+{
+    "name": "my.tunnel",
+    "host": "example.com",
+    "tunnel": {
+        "local": {
+            "address": "127.0.0.1",
+            "port": 8443
+        },
+        "remote": {
+            "address": "192.168.1.1",
+            "port": 443
+        }
+    }
+}
+```
+
+By running the following command:
+
+    shellz -tunnel -on my.tunnel
+
+The remote endpoint `https://192.168.1.1` will be tunneled by `example.com` and available on your computer at `https://localhost:8443`.
+
 ### Plugins
 
 Instead of the two default types, `ssh` and `telnet`, you can specify a custom name, in which case shellz will try to use a user plugin. Let's start by creating a new shell json file `~/.shellz/shells/custom.json` with the following contents:
