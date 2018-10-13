@@ -290,6 +290,10 @@ Run the command `uptime` on every shell and save each outputs to a different fil
 
     shellz -run uptime -to "{{.Identity.Username}}_{{.Name}}.txt"
 
+Start a ssh reverse tunnel:
+
+    shellz -tunnel -on some-tunnel
+
 For a list of all available flags and some usage examples just type `shellz` without arguments.
 
 ## License
