@@ -11,13 +11,13 @@ import (
 	"github.com/evilsocket/islazy/plugin"
 )
 
-var (
-	defines = map[string]interface{}{
+func init() {
+	plugin.Defines = map[string]interface{}{
 		"log":  getLOG(),
 		"tcp":  getTCP(),
 		"http": getHTTP(),
 	}
-)
+}
 
 type Plugin struct {
 	*plugin.Plugin
@@ -27,7 +27,7 @@ type Plugin struct {
 }
 
 func LoadPlugin(path string) (error, *Plugin) {
-	if p, err := plugin.Load(path, defines); err != nil {
+	if p, err := plugin.Load(path); err != nil {
 		return err, nil
 	} else {
 		return nil, &Plugin{
