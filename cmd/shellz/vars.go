@@ -12,20 +12,21 @@ var (
 	Shells = models.Shells(nil)
 	Groups = models.Groups(nil)
 
-	command   = ""
-	onFilter  = "all"
-	onShells  = models.Shells{}
-	nShells   = 0
-	toOutput  = ""
-	doForce   = false
-	doList    = false
-	doTest    = false
-	doTunnel  = false
-	doEnable  = ""
-	doDisable = ""
-	doStats   = false
-	noBanner  = false
-	err       = error(nil)
+	numWorkers = -1
+	command    = ""
+	onFilter   = "all"
+	onShells   = models.Shells{}
+	nShells    = 0
+	toOutput   = ""
+	doForce    = false
+	doList     = false
+	doTest     = false
+	doTunnel   = false
+	doEnable   = ""
+	doDisable  = ""
+	doStats    = false
+	noBanner   = false
+	err        = error(nil)
 
 	timeouts = core.Timeouts{
 		Connect: 5 * time.Second,

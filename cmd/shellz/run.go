@@ -9,7 +9,6 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/shellz/models"
 	"github.com/evilsocket/shellz/plugins"
 	"github.com/evilsocket/shellz/session"
@@ -17,6 +16,7 @@ import (
 	"github.com/dustin/go-humanize"
 
 	"github.com/evilsocket/islazy/async"
+	"github.com/evilsocket/islazy/log"
 	"github.com/evilsocket/islazy/str"
 	"github.com/evilsocket/islazy/tui"
 )
@@ -35,7 +35,7 @@ type statistics struct {
 
 var (
 	toOutputLock = sync.Mutex{}
-	runQueue     = async.NewQueue(-1, cmdWorker)
+	runQueue     = (*async.WorkQueue)(nil)
 	stats        = statistics{}
 )
 
@@ -233,6 +233,8 @@ func runCommand() {
 	} else {
 		log.Debug("running %s on %d shells ...", tui.Dim(command), nShells)
 	}
+
+	runQueue = async.NewQueue(numWorkers, cmdWorker)
 
 	stats.Shells = uint64(nShells)
 	stats.Started = time.Now()

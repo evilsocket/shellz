@@ -10,7 +10,7 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:b29add3fec2be5dfd57ae61b1025f185dfa45667e067f4d3fc5ea3fb812f7766"
+  digest = "1:2aaeb747e75add8dd55410da7c4ab65b53de672c2496d15a8f5bec56c7fce83c"
   name = "github.com/evilsocket/islazy"
   packages = [
     "async",
@@ -21,8 +21,8 @@
     "tui",
   ]
   pruneopts = "UT"
-  revision = "72e580f7bbdfb45d1332e06653248bc609bf0d50"
-  version = "v1.4.0"
+  revision = "ba851ad172f4be37fcaab106c8c9ebe42e3fa4ac"
+  version = "v1.7.0"
 
 [[projects]]
   branch = "master"
@@ -71,7 +71,7 @@
     "ssh/agent",
   ]
   pruneopts = "UT"
-  revision = "a92615f3c49003920a58dedcf32cf55022cefb8d"
+  revision = "0c41d7ab0a0ee717d4590a44bcb987dfd9e183eb"
 
 [[projects]]
   branch = "master"

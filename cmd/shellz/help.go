@@ -38,6 +38,7 @@ var (
 
 func init() {
 	flag.StringVar(&models.Path, "path", models.Path, "Base path of the shellz json files.")
+	flag.IntVar(&numWorkers, "workers", numWorkers, "Number of concurrent workers to use for commands and tunnels, -1 to use all available logical CPUs.")
 
 	flag.BoolVar(&doList, "list", doList, "List available shells and exit.")
 

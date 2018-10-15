@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	tunQueue = async.NewQueue(-1, tunWorker)
+	tunQueue = (*async.WorkQueue)(nil)
 )
 
 func tunWorker(job async.Job) {
@@ -52,6 +52,8 @@ func runTunnel() {
 	} else {
 		log.Info("starting %d tunnel, please wait ...\n", nShells)
 	}
+
+	tunQueue = async.NewQueue(numWorkers, tunWorker)
 
 	for name := range onShells {
 		tunQueue.Add(onShells[name])
