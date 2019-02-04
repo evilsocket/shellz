@@ -8,7 +8,7 @@
   </p>
 </p>
 
-`shellz` is a small utility to track and control your ssh, telnet, web and custom shells and tunnels ([demo](https://www.youtube.com/watch?v=ZjMRbUhw9z4)).
+`shellz` is a small utility to track and control your ssh, telnet, winrm, web and custom shells and tunnels ([demo](https://www.youtube.com/watch?v=ZjMRbUhw9z4)).
 
 ## Installation
 
@@ -87,7 +87,7 @@ If you wish to use a SOCKS5 proxy (supported for the `ssh` session and custom sh
 }
 ```
 
-Also the `telnet` protocol is supported:
+Also the `telnet` and `winrm` protocols are supported:
 
 ```sh
 cat ~/.shellz/shells/tnas.json
@@ -100,6 +100,19 @@ cat ~/.shellz/shells/tnas.json
     "port": 23,
     "identity": "admin-tnas",
     "type": "telnet"
+}
+```
+
+```sh
+cat ~/.shellz/shells/win.json
+```
+
+```json
+{
+    "name": "win10",
+    "host": "win10.local",
+    "identity": "admin-win10",
+    "type": "winrm"
 }
 ```
 

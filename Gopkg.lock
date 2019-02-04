@@ -2,6 +2,37 @@
 
 
 [[projects]]
+  branch = "master"
+  digest = "1:96d5c4e62a948c75882439e8ae1e2bf28db813849724c15b1e88104c80b24e57"
+  name = "github.com/Azure/go-ntlmssp"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "4a21cbd618b459155f8b8ee7f4491cd54f5efa77"
+
+[[projects]]
+  digest = "1:3f05b2028e83bf1d97d9ab2874bfc9f12f91a2946019499f830db16a02eb2385"
+  name = "github.com/ChrisTrenkamp/goxpath"
+  packages = [
+    ".",
+    "internal/execxp",
+    "internal/lexer",
+    "internal/parser",
+    "internal/parser/findutil",
+    "internal/parser/intfns",
+    "internal/parser/pathexpr",
+    "internal/xconst",
+    "internal/xsort",
+    "tree",
+    "tree/xmltree",
+    "tree/xmltree/xmlbuilder",
+    "tree/xmltree/xmlele",
+    "tree/xmltree/xmlnode",
+  ]
+  pruneopts = "UT"
+  revision = "2ad3b31cf4a21db70fc0cacd0e0120eaae566f98"
+  version = "v1.0-alpha3"
+
+[[projects]]
   digest = "1:6f9339c912bbdda81302633ad7e99a28dfa5a639c864061f1929510a9a64aa74"
   name = "github.com/dustin/go-humanize"
   packages = ["."]
@@ -23,6 +54,33 @@
   pruneopts = "UT"
   revision = "cbdab98bdf66f776cf87f90f51328c7b41348125"
   version = "v1.9.3"
+
+[[projects]]
+  branch = "master"
+  digest = "1:a7c1ab68a6cdeffcb148dc0d8b92c897f034aa38f58b69eab9bc6e77645b26fb"
+  name = "github.com/masterzen/simplexml"
+  packages = ["dom"]
+  pruneopts = "UT"
+  revision = "4572e39b1ab9fe03ee513ce6fc7e289e98482190"
+
+[[projects]]
+  branch = "master"
+  digest = "1:da344f3de94ad2424502dab3e8877ec79cc12b377e5b509aa74c94a751ace974"
+  name = "github.com/masterzen/winrm"
+  packages = [
+    ".",
+    "soap",
+  ]
+  pruneopts = "UT"
+  revision = "a196a4ff2a86e262d40284f34b6d5bf328d22d29"
+
+[[projects]]
+  branch = "master"
+  digest = "1:0e1e5f960c58fdc677212fcc70e55042a0084d367623e51afbdb568963832f5d"
+  name = "github.com/nu7hatch/gouuid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "179d4d0c4d8d407a32af483c2354df1d2c91e6c3"
 
 [[projects]]
   branch = "master"
@@ -58,7 +116,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a741998d8633b7f444053abdf218de3d8f66dc02f832e182b983b80f8c7ba852"
+  digest = "1:532e018ac9a0a90e411455171157f1fe84b9c3909f33abe25467d472b3fa01de"
   name = "golang.org/x/crypto"
   packages = [
     "curve25519",
@@ -66,6 +124,7 @@
     "ed25519/internal/edwards25519",
     "internal/chacha20",
     "internal/subtle",
+    "md4",
     "poly1305",
     "ssh",
     "ssh/agent",
@@ -75,14 +134,43 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0a004b4ff5794b399b3556e68f0c436a57d5f7e437e740bb16c0b521ceb23fd7"
+  digest = "1:6a836ddb20f3dc83ff08d355a27eb0aa7d3020d2ba1ddaadc56d87c28bf65a2b"
   name = "golang.org/x/net"
   packages = [
+    "html",
+    "html/atom",
+    "html/charset",
     "internal/socks",
     "proxy",
   ]
   pruneopts = "UT"
   revision = "d26f9f9a57f3fab6a695bec0d84433c2c50f8bbf"
+
+[[projects]]
+  digest = "1:aa4d6967a3237f8367b6bf91503964a77183ecf696f1273e8ad3551bb4412b5f"
+  name = "golang.org/x/text"
+  packages = [
+    "encoding",
+    "encoding/charmap",
+    "encoding/htmlindex",
+    "encoding/internal",
+    "encoding/internal/identifier",
+    "encoding/japanese",
+    "encoding/korean",
+    "encoding/simplifiedchinese",
+    "encoding/traditionalchinese",
+    "encoding/unicode",
+    "internal/gen",
+    "internal/tag",
+    "internal/utf8internal",
+    "language",
+    "runes",
+    "transform",
+    "unicode/cldr",
+  ]
+  pruneopts = "UT"
+  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
+  version = "v0.3.0"
 
 [[projects]]
   digest = "1:9935525a8c49b8434a0b0a54e1980e94a6fae73aaff45c5d33ba8dff69de123e"
@@ -106,6 +194,7 @@
     "github.com/evilsocket/islazy/plugin",
     "github.com/evilsocket/islazy/str",
     "github.com/evilsocket/islazy/tui",
+    "github.com/masterzen/winrm",
     "github.com/reiver/go-telnet",
     "golang.org/x/crypto/ssh",
     "golang.org/x/crypto/ssh/agent",
