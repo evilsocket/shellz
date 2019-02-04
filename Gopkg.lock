@@ -10,7 +10,7 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:2aaeb747e75add8dd55410da7c4ab65b53de672c2496d15a8f5bec56c7fce83c"
+  digest = "1:bd32c129fe70214cc893506d1e5ca5fa66f29f5a75b43610959fc22b705cc650"
   name = "github.com/evilsocket/islazy"
   packages = [
     "async",
@@ -21,8 +21,8 @@
     "tui",
   ]
   pruneopts = "UT"
-  revision = "ba851ad172f4be37fcaab106c8c9ebe42e3fa4ac"
-  version = "v1.7.0"
+  revision = "cbdab98bdf66f776cf87f90f51328c7b41348125"
+  version = "v1.9.3"
 
 [[projects]]
   branch = "master"
@@ -58,7 +58,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:1629d30466fabfd508b9aaa0267ab0913dc9f9d4fef2bb8293c1b02bd846ff7e"
+  digest = "1:a741998d8633b7f444053abdf218de3d8f66dc02f832e182b983b80f8c7ba852"
   name = "golang.org/x/crypto"
   packages = [
     "curve25519",
@@ -71,18 +71,18 @@
     "ssh/agent",
   ]
   pruneopts = "UT"
-  revision = "0c41d7ab0a0ee717d4590a44bcb987dfd9e183eb"
+  revision = "b8fe1690c61389d7d2a8074a507d1d40c5d30448"
 
 [[projects]]
   branch = "master"
-  digest = "1:3fa70ba3ba75f47646d2a6ff518f46f3c4a215912eb6f9c26b6e956918038f01"
+  digest = "1:0a004b4ff5794b399b3556e68f0c436a57d5f7e437e740bb16c0b521ceb23fd7"
   name = "golang.org/x/net"
   packages = [
     "internal/socks",
     "proxy",
   ]
   pruneopts = "UT"
-  revision = "49bb7cea24b1df9410e1712aa6433dae904ff66a"
+  revision = "d26f9f9a57f3fab6a695bec0d84433c2c50f8bbf"
 
 [[projects]]
   digest = "1:9935525a8c49b8434a0b0a54e1980e94a6fae73aaff45c5d33ba8dff69de123e"
