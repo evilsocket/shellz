@@ -10,6 +10,7 @@ var (
 		"ssh":        NewSSH,
 		"ssh.tunnel": NewSSHTun,
 		"telnet":     NewTelnet,
+		"winrm":      NewWinRM,
 	}
 )
 
