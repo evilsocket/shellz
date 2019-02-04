@@ -113,7 +113,9 @@ cat ~/.shellz/shells/win.json
     "host": "win10.local",
     "port": 5986,
     "identity": "admin-win10",
-    "type": "winrm"
+    "type": "winrm",
+    "https": true,
+    "insecure": false
 }
 ```
 

@@ -89,7 +89,7 @@ func (s *SSHSession) Exec(cmd string) ([]byte, error) {
 	s.Lock()
 	defer s.Unlock()
 
-	obj, err := async.WithTimeout(s.timeouts.Write+s.timeouts.Read, func() interface{} {
+	obj, err := async.WithTimeout(s.timeouts.RW(), func() interface{} {
 		out, err := s.session.CombinedOutput(cmd)
 		return cmdResult{out: out, err: err}
 	})

@@ -28,8 +28,16 @@ func NewWinRM(sh models.Shell, timeouts core.Timeouts) (error, Session) {
 	t := &WinRMSession{
 		host:     sh.Host,
 		port:     sh.Port,
-		endpoint: winrm.NewEndpoint(sh.Host, sh.Port, false, false, nil, nil, nil, 0),
 		timeouts: timeouts,
+		endpoint: winrm.NewEndpoint(
+			sh.Host,
+			sh.Port,
+			sh.HTTPS,
+			sh.Insecure,
+			nil,
+			nil,
+			nil,
+			timeouts.Total()),
 	}
 
 	_, err = async.WithTimeout(timeouts.Connect, func() interface{} {
@@ -51,7 +59,7 @@ func (w *WinRMSession) Exec(cmd string) ([]byte, error) {
 	w.Lock()
 	defer w.Unlock()
 
-	obj, err := async.WithTimeout(w.timeouts.Write+w.timeouts.Read, func() interface{} {
+	obj, err := async.WithTimeout(w.timeouts.RW(), func() interface{} {
 		outWriter := bytes.Buffer{}
 		errWriter := bytes.Buffer{}
 		if _, err := w.client.Run(cmd, &outWriter, &errWriter); err != nil {
