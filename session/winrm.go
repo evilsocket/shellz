@@ -65,7 +65,11 @@ func (w *WinRMSession) Exec(cmd string) ([]byte, error) {
 		if _, err := w.client.Run(cmd, &outWriter, &errWriter); err != nil {
 			return cmdResult{err: err}
 		} else {
-			return cmdResult{out: outWriter.Bytes(), err: fmt.Errorf("%s", errWriter.String())}
+			res := cmdResult{out: outWriter.Bytes()}
+			if sErr := errWriter.String(); sErr != "" {
+				res.err = fmt.Errorf("%s", sErr)
+			}
+			return res
 		}
 	})
 	if err != nil {
