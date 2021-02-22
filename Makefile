@@ -1,11 +1,8 @@
 TARGET=shellz
 
-all: deps build
+all: build
 
-deps: godep
-	@dep ensure
-
-build: deps
+build:
 	@go build -ldflags="-s -w" -o $(TARGET) cmd/shellz/*.go
 
 clean:
@@ -14,6 +11,3 @@ clean:
 
 install: build
 	@mv $(TARGET) $(GOPATH)/bin/
-
-godep:
-	@go get -u github.com/golang/dep/...
