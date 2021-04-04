@@ -23,8 +23,5 @@ git:
 before_install:
   - sudo apt-get -qq update
 
-install:
-  - make deps
-
 script:
   - make build
