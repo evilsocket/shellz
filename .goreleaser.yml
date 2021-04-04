@@ -33,11 +33,12 @@ changelog:
       - Merge branch
       - Releasing v
 
-archive:
-  format: tar.gz
-  format_overrides:
-    - goos: windows
-      format: zip
-  files:
-      - LICENSE.md
-      - README.md
+archives:
+  - id: archive
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+        - LICENSE.md
+        - README.md
