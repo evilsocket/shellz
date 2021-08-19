@@ -200,7 +200,9 @@ The remote endpoint `https://192.168.1.1` will be tunneled by `example.com` and 
 
 ### Plugins
 
-Instead of the two default types, `ssh` and `telnet`, you can specify a custom name, in which case shellz will try to use a user plugin. Let's start by creating a new shell json file `~/.shellz/shells/custom.json` with the following contents:
+Instead of one of the supported types, you can specify a custom name, in which case shellz will use an external plugin. 
+
+Let's start by creating a new shell json file `~/.shellz/shells/custom.json` with the following contents:
 
 ```json
 {
