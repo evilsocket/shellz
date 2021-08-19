@@ -8,7 +8,9 @@
   </p>
 </p>
 
-`shellz` is a small utility to track and control your `ssh`, `telnet`, `kubernetes`, `winrm`, `web` and custom shells and tunnels ([demo](https://www.youtube.com/watch?v=ZjMRbUhw9z4)).
+`shellz` is a small utility to manage your `ssh`, `telnet`, `kubernetes`, `winrm`, `web` or any custom shell in a single place. 
+
+This means that with a single tool with a simple command line, you will be able to execute shell commands on any of those systems transparently, so that you can, for instance, check the uptime of all your systems, whether it is a Windows machine, a Kubernetes pod, an SSH server or a Raspbery Pi like [shown in this demo](https://www.youtube.com/watch?v=ZjMRbUhw9z4).
 
 ## Installation
 
@@ -44,6 +46,8 @@ As you can see my `default` identity is using my SSH private key to log in the `
 }
 ```
 
+### SSH 
+
 Now let's create our first shell json file ( `~/.shellz/shells/media.json` ) that will use the `default` identity we just created to connect to our home media server (called `media.server` in our example):
 
 ```json
@@ -56,38 +60,7 @@ Now let's create our first shell json file ( `~/.shellz/shells/media.json` ) tha
 }
 ```
 
-Shells can (optionally) be grouped (with a default `all` group containing all of them) and, by default, they are considered `ssh`, in which case you can also specify the ciphers your server supports:
-
-
-```json
-{
-    "name": "old-server",
-    "host": "old.server",
-    "groups": ["servers", "legacy"],
-    "port": 22,
-    "identity": "default",
-    "ciphers": ["aes128-cbc", "3des-cbc"]
-}
-```
-
-If you wish to use a SOCKS5 proxy (supported for the `ssh` session and custom shells), for instance to reach a shell on a TOR hidden service, you can use the `"proxy"` configuration object:
-
-```json
-{
-  "name": "my-tor-shell",
-  "host": "whateverwhateveroihfdwoeghfd.onion",
-  "port": 22,
-  "identity": "default",
-  "proxy": {
-    "address": "127.0.0.1",
-    "port": 9050,
-    "username": "this is an optional field",
-    "password": "this is an optional field"
-  }
-}
-```
-
-Also the `telnet`, `winrm` and `kube` protocols are supported:
+### Telnet
 
 ```sh
 cat ~/.shellz/shells/tnas.json
@@ -102,6 +75,9 @@ cat ~/.shellz/shells/tnas.json
     "type": "telnet"
 }
 ```
+
+### WinRM
+
 
 ```sh
 cat ~/.shellz/shells/win.json
@@ -118,6 +94,8 @@ cat ~/.shellz/shells/win.json
     "insecure": false
 }
 ```
+
+### Kubernetes 
 
 ```sh
 cat ~/.shellz/shells/kube-pod.json
@@ -156,8 +134,43 @@ cat ~/.shellz/idents/microk8s.json
 Where the `~/.microk8s-bearer-token` file must contain the bearer token obtained with:
 
     token=$(kubectl -n kube-system get secret | grep default-token | cut -d " " -f1)
-    kubectl -n kube-system describe secret $token | grep "token:"
+    kubectl -n kube-system describe secret $token | grep "token:"    
 
+### SOCKS5
+
+If you wish to use a SOCKS5 proxy (supported for the `ssh` session and custom shells), for instance to reach a shell on a TOR hidden service, you can use the `"proxy"` configuration object:
+
+```json
+{
+  "name": "my-tor-shell",
+  "host": "whateverwhateveroihfdwoeghfd.onion",
+  "port": 22,
+  "identity": "default",
+  "proxy": {
+    "address": "127.0.0.1",
+    "port": 9050,
+    "username": "this is an optional field",
+    "password": "this is an optional field"
+  }
+}
+```
+
+### Using Groups 
+
+Shells can (optionally) be grouped (with a default `all` group containing all of them) and, by default, they are considered `ssh`, in which case you can also specify the ciphers your server supports:
+
+
+```json
+{
+    "name": "old-server",
+    "host": "old.server",
+    "groups": ["servers", "legacy"],
+    "port": 22,
+    "identity": "default",
+    "ciphers": ["aes128-cbc", "3des-cbc"]
+}
+```
+    
 ### Reverse Tunnels
 
 `shellz` can be used for starting reverse SSH tunnels, for instance, let's create the `~/.shellz/shells/mytunnel.json` file:
