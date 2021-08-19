@@ -153,7 +153,7 @@ cat ~/.shellz/idents/microk8s.json
 }
 ```
 
-Where the `~/.microk8s-bearer-token` must contain the bearer token obtained with:
+Where the `~/.microk8s-bearer-token` file must contain the bearer token obtained with:
 
     token=$(kubectl -n kube-system get secret | grep default-token | cut -d " " -f1)
     kubectl -n kube-system describe secret $token | grep "token:"
