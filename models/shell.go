@@ -8,32 +8,36 @@ import (
 )
 
 const (
-	defaultEnabled  = true
-	defaultHost     = "localhost"
-	defaultPort     = 22
-	defaultIdentity = "default"
-	defaultType     = "ssh"
-	defaultHTTPS    = true
-	defaultInsecure = false
+	defaultEnabled   = true
+	defaultHost      = "localhost"
+	defaultPort      = 22
+	defaultIdentity  = "default"
+	defaultType      = "ssh"
+	defaultHTTPS     = true
+	defaultInsecure  = false
+	defaultNamespace = "default"
+	defaultContainer = ""
+	defaultPod       = ""
 )
 
 type Shell struct {
-	Name         string   `json:"name"`
-	Host         string   `json:"host"`
-	Port         int      `json:"port"`
-	IdentityName string   `json:"identity"`
-	Type         string   `json:"type"`
-	Ciphers      []string `json:"ciphers"`
-	HTTPS        bool     `json:"https"`
-	Insecure     bool     `json:"insecure"`
-	Enabled      bool     `json:"enabled"`
-	Groups       []string `json:"groups"`
-	Proxy        Proxy    `json:"proxy"`
-
-	Tunnel Tunnel `json:"tunnel"`
-
-	Identity *Identity `json:"-"`
-	Path     string    `json:"-"`
+	Name         string    `json:"name"`
+	Host         string    `json:"host"`
+	Port         int       `json:"port"`
+	IdentityName string    `json:"identity"`
+	Type         string    `json:"type"`
+	Ciphers      []string  `json:"ciphers"`
+	HTTPS        bool      `json:"https"`
+	Insecure     bool      `json:"insecure"`
+	Enabled      bool      `json:"enabled"`
+	Groups       []string  `json:"groups"`
+	Proxy        Proxy     `json:"proxy"`
+	Tunnel       Tunnel    `json:"tunnel"`
+	Namespace    string    `json:"namespace"`
+	Container    string    `json:"container"`
+	Pod          string    `json:"pod"`
+	Identity     *Identity `json:"-"`
+	Path         string    `json:"-"`
 }
 
 func LoadShell(path string, idents Identities) (err error, shell Shell) {
@@ -46,6 +50,9 @@ func LoadShell(path string, idents Identities) (err error, shell Shell) {
 		IdentityName: defaultIdentity,
 		HTTPS:        defaultHTTPS,
 		Insecure:     defaultInsecure,
+		Namespace:    defaultNamespace,
+		Container:    defaultContainer,
+		Pod:          defaultPod,
 	}
 
 	file, err := os.Open(path)

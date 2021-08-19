@@ -11,6 +11,7 @@ var (
 		"ssh.tunnel": NewSSHTun,
 		"telnet":     NewTelnet,
 		"winrm":      NewWinRM,
+		"kube":       NewKube,
 	}
 )
 
