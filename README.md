@@ -8,7 +8,7 @@
   </p>
 </p>
 
-`shellz` is a small utility to track and control your ssh, telnet, winrm, web and custom shells and tunnels ([demo](https://www.youtube.com/watch?v=ZjMRbUhw9z4)).
+`shellz` is a small utility to track and control your ssh, telnet, kubernetes, winrm, web and custom shells and tunnels ([demo](https://www.youtube.com/watch?v=ZjMRbUhw9z4)).
 
 ## Installation
 
@@ -87,7 +87,7 @@ If you wish to use a SOCKS5 proxy (supported for the `ssh` session and custom sh
 }
 ```
 
-Also the `telnet` and `winrm` protocols are supported:
+Also the `telnet`, `winrm` and `kube` protocols are supported:
 
 ```sh
 cat ~/.shellz/shells/tnas.json
@@ -118,6 +118,45 @@ cat ~/.shellz/shells/win.json
     "insecure": false
 }
 ```
+
+```sh
+cat ~/.shellz/shells/kube-pod.json
+```
+
+```json
+{
+  "name": "kube-microbot",
+  "host": "https://127.0.0.1:16443",
+  "type": "kube",
+  "namespace": "default",
+  "pod": "microbot-5f5499d479-qp9z7",
+  "groups": [
+    "kube",
+    "cluster"
+  ],
+  "identity": "microk8s",
+}
+```
+
+Where the host field must point to the Kubernetes control plane URL obtained with:
+
+    kubectl cluster-info | grep control 
+
+```sh
+cat ~/.shellz/idents/microk8s.json
+```
+
+```json
+{
+    "name": "microk8s",
+    "key": "~/.microk8s-bearer-token"
+}
+```
+
+Where the `~/.microk8s-bearer-token` must contain the bearer token obtained with:
+
+    token=$(kubectl -n kube-system get secret | grep default-token | cut -d " " -f1)
+    kubectl -n kube-system describe secret $token | grep "token:"
 
 ### Reverse Tunnels
 
