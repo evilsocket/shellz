@@ -84,9 +84,6 @@ func (p *Plugin) Exec(cmd string) ([]byte, error) {
 }
 
 func (p *Plugin) Close() {
-	p.Lock()
-	defer p.Unlock()
-
 	if err, _ := p.Call("Close", p.ctx); err != nil {
 		log.Warning("error while running Close callback for plugin %s: %s", p.Name, err)
 	}
