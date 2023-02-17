@@ -65,9 +65,6 @@ type eres struct {
 }
 
 func (p *Plugin) Exec(cmd string) ([]byte, error) {
-	p.Lock()
-	defer p.Unlock()
-
 	obj, err := async.WithTimeout(p.timeouts.Read+p.timeouts.Write, func() interface{} {
 		if ret, err := p.Call("Exec", p.ctx, cmd); err != nil {
 			return eres{err: err}
